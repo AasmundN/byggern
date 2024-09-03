@@ -1,21 +1,18 @@
-/*
- * External includes
- */
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <stdio.h>
 #include <string.h>
 
-/*
- * Internal includes
- */
 #include "uart.h"
 
+// RX complete callback
 void (*rx_cb)();
 
 unsigned char UART_receive() { return UDR0; }
 
 void UART_transmit(unsigned char ch)
 {
+  // wait for TX ready
   while (!(UCSR0A & (1 << UDRE0)))
     ;
 
@@ -35,7 +32,7 @@ void UART_init(unsigned int baudrate)
   // USART0 transmit and receive enable
   UCSR0B |= (1 << TXEN0) | (1 << RXEN0);
 
-  // USART 0 set frame 8 bit and 2 stop bit
+  // USART0 set frame 8 bit and 2 stop bit
   UCSR0B |= (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
 
   // USART0 enable RX complete interrupt
@@ -45,13 +42,14 @@ void UART_init(unsigned int baudrate)
   rx_cb = default_rxc_cb;
 
   sei();
-}
 
-void UART_transmit_string(char *string) {
-  for (size_t i = 0; i < strlen(string); i++)
-    UART_transmit(string[i]);
+  // redirect printf to UART
+  fdevopen((void *)UART_transmit, NULL);
 }
 
 void UART_rxc_register_cb(void (*cb)()) { rx_cb = cb; }
 
+/**
+ * Interrupt service routine for RX complete
+ */
 ISR(USART0_RXC_vect) { rx_cb(); }
