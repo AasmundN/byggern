@@ -2,7 +2,7 @@
 
 Repository for project in NTNU course TTK4155, commonly called _Byggern_.
 
-# Convention for wire colors
+### Convention for wire colors
 
 - **Red** - Vcc
 - **Black** - Ground (Earth)
