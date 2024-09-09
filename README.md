@@ -11,6 +11,6 @@ Repository for project in NTNU course TTK4155, commonly called _Byggern_.
 - **Blue** - Data (External Memory, ADC)
 - **Pink** - ALE (Latch Enable), SPI Interrupt
 - **Orange** - Read Enable, MISO
-- **Purple** - Write Enable, MOSI
+- **Purple** - Control, Write Enable, MOSI
 - **Yellow** - CLK, C2+
 - **Brown** - USB Multifunction Board
