@@ -4,13 +4,13 @@ Repository for project in NTNU course TTK4155, commonly called _Byggern_.
 
 ### Convention for wire colors
 
-- **Red** - Vcc
+- **Red** - Vcc, C2-
 - **Black** - Ground (Earth)
-- **Yellow** - Pairing, NAND (Logic Circuits and Chip Select), Reset, Slave Select
-- **Green** - Address (External Memory), Transmit (UART)
-- **Blue** - Data (External Memory, ADC), Receive (UART)
+- **Brown** - Pairing, NAND (Logic Circuits and Chip Select), Reset, Slave Select
+- **Green** - Address (External Memory), Transmit (UART), Receive (UART)
+- **Blue** - Data (External Memory, ADC)
 - **Pink** - ALE (Latch Enable), SPI Interrupt
 - **Orange** - Read Enable, MISO
 - **Purple** - Write Enable, MOSI
-- **Gray** - CLK/PWM AD
+- **Yellow** - CLK, C2+
 - **Brown** - USB Multifunction Board
