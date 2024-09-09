@@ -1,6 +1,8 @@
 #ifndef __UART__
 #define __UART__
 
+#define UART_BAUD(fcpu, baud) (fcpu / 16 / baud - 1)
+
 /**
  * Initialize USART0 with RX and TX enabled
  * @param unsigned int value written to baud registers

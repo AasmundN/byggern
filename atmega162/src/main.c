@@ -1,5 +1,4 @@
 #define F_CPU 4900000UL
-#define UART_BAUD(fcpu, baud) (fcpu / 16 / baud - 1)
 
 #include <avr/interrupt.h>
 #include <stdbool.h>
