@@ -8,9 +8,8 @@ Repository for project in NTNU course TTK4155, commonly called _Byggern_.
 - **Black** - Ground (Earth)
 - **Brown** - Pairing, NAND (Logic Circuits and Chip Select), Reset, Slave Select
 - **Green** - Transmit (UART), Receive (UART), V- (MAX233)
-- **Blue** - Data (External Memory, ADC)
-- **Pink** - ALE (Latch Enable), SPI Interrupt
+- **Blue** - ALE
 - **Orange** - Read Enable, MISO
 - **Purple** - Address (External Memory), Control, Write Enable, MOSI
-- **Yellow** - CLK, C2+
+- **Yellow** - CLK, C2+, Data 
 - **Brown** - USB Multifunction Board
