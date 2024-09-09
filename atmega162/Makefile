@@ -17,6 +17,7 @@ TARGET_DEVICE := m162
 # List all source files to be compiled; separate with space
 SOURCE_FILES := ./$(SOURCE_DIR)/main.c \
 								./$(SOURCE_DIR)/uart.c \
+								./$(SOURCE_DIR)/sys.c \
 
 
 CC := avr-gcc

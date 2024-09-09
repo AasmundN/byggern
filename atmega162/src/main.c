@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#include "sys.h"
 #include "uart.h"
 
 volatile bool should_transmit = false;
@@ -18,6 +19,7 @@ void uart_rxc_cb()
 
 int main()
 {
+  SYS_init();
   UART_init(UART_BAUD(F_CPU, 9600));
   UART_rxc_register_cb(uart_rxc_cb);
 
@@ -28,8 +30,10 @@ int main()
     if (!should_transmit)
       continue;
 
-    printf("\r\nReceived: %c\r\n", received_ch);
+    SRAM_test();
 
     should_transmit = false;
   }
+
+  SRAM_test();
 }
