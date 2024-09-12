@@ -5,13 +5,13 @@
 
 /**
  * Initialize USART0 with RX and TX enabled
- * @param unsigned int value written to baud registers
+ * @param baudrate value written to baud registers
  */
 void UART_init(unsigned int baudrate);
 
 /**
  * Transmit char on USART0, waits for TX ready
- * @param unsigned char char to be sent
+ * @param ch char to be sent
  */
 void UART_transmit(unsigned char ch);
 
@@ -24,8 +24,8 @@ unsigned char UART_receive();
 /**
  * Register callback for the RX complete interrupt
  * Callback must read data register
- * @see UART_transmit()
- * @param pointer to callback
+ * @see UART_receive()
+ * @param cb pointer to callback
  */
 void UART_rxc_register_cb(void (*cb)());
 
