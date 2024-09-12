@@ -18,6 +18,7 @@ TARGET_DEVICE := m162
 SOURCE_FILES := ./$(SOURCE_DIR)/main.c \
 								./$(SOURCE_DIR)/uart.c \
 								./$(SOURCE_DIR)/sys.c \
+								./$(SOURCE_DIR)/gpio.c \
 
 
 CC := avr-gcc
