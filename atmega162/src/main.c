@@ -34,6 +34,4 @@ int main()
 
     should_transmit = false;
   }
-
-  SRAM_test();
 }
