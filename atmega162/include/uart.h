@@ -27,6 +27,6 @@ unsigned char UART_receive();
  * @see UART_receive()
  * @param cb pointer to callback
  */
-void UART_rxc_register_cb(void (*cb)());
+void UART_set_RX_CMPLT_cb(void (*cb)());
 
 #endif // __UART__

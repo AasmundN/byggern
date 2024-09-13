@@ -6,7 +6,7 @@
 #include "uart.h"
 
 // RX complete callback
-void (*rx_cb)();
+void (*RX_CMPLT_cb)();
 
 unsigned char UART_receive() { return UDR0; }
 
@@ -19,7 +19,7 @@ void UART_transmit(unsigned char ch)
   UDR0 = ch;
 }
 
-void default_rxc_cb() { unsigned char ch = UART_receive(); }
+void default_RX_CMPLT_cb() { unsigned char ch = UART_receive(); }
 
 void UART_init(unsigned int baudrate)
 {
@@ -39,7 +39,7 @@ void UART_init(unsigned int baudrate)
   UCSR0B |= (1 << RXCIE0);
 
   // set USART0 RX complete interrupt callback
-  rx_cb = default_rxc_cb;
+  RX_CMPLT_cb = default_RX_CMPLT_cb;
 
   sei();
 
@@ -47,9 +47,9 @@ void UART_init(unsigned int baudrate)
   fdevopen((void *)UART_transmit, NULL);
 }
 
-void UART_rxc_register_cb(void (*cb)()) { rx_cb = cb; }
+void UART_set_RX_CMPLT_cb(void (*cb)()) { RX_CMPLT_cb = cb; }
 
 /**
  * Interrupt service routine for RX complete
  */
-ISR(USART0_RXC_vect) { rx_cb(); }
+ISR(USART0_RXC_vect) { RX_CMPLT_cb(); }

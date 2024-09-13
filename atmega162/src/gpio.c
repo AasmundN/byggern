@@ -9,7 +9,7 @@ void GPIO_init(pin_config_t *pins, int num_pins)
     volatile uint8_t *DDRx = pins[index].port - sizeof(uint8_t);
 
     // set pin direction
-    DDRB |= (pins[index].direction << pins[index].offset);
+    *DDRx |= (pins[index].direction << pins[index].offset);
 
     // set internal pullup
     if (pins[index].direction == INPUT)
