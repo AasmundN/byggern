@@ -32,6 +32,7 @@ pin_config_t pins[NUM_PINS] = {
 
 volatile bool should_transmit = false;
 volatile unsigned char received_ch;
+uint8_t adc_result[NUM_ADC_CHANNELS];
 
 void uart_receive_cb()
 {
@@ -59,14 +60,13 @@ int main()
   {
     if (!should_transmit)
       continue;
-    printf("Reading ADC:\r\n");
-    uint8_t result[NUM_ADC_CHANNELS];
-    ADC_read(result);
-    
-    for(uint8_t i=0;i<NUM_ADC_CHANNELS;i++)
-    {
-      printf("%hhu\r\n",result[i]);
-    }
+
+    printf("\r\nReading ADC:\r\n");
+
+    ADC_read(adc_result);
+
+    for (uint8_t i = 0; i < NUM_ADC_CHANNELS; i++)
+      printf("%hhu\r\n", adc_result[i]);
 
     should_transmit = false;
   }
