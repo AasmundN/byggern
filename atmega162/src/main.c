@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#include "adc.h"
 #include "gpio.h"
 #include "sys.h"
 #include "timer.h"
@@ -58,8 +59,14 @@ int main()
   {
     if (!should_transmit)
       continue;
-
-    SRAM_test();
+    printf("Reading ADC:\r\n");
+    uint8_t result[NUM_ADC_CHANNELS];
+    ADC_read(result);
+    
+    for(uint8_t i=0;i<NUM_ADC_CHANNELS;i++)
+    {
+      printf("%hhu\r\n",result[i]);
+    }
 
     should_transmit = false;
   }
