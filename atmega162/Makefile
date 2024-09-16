@@ -20,6 +20,7 @@ SOURCE_FILES := ./$(SOURCE_DIR)/main.c \
 								./$(SOURCE_DIR)/sys.c \
 								./$(SOURCE_DIR)/gpio.c \
 								./$(SOURCE_DIR)/timer.c \
+								./$(SOURCE_DIR)/adc.c \
 
 
 CC := avr-gcc

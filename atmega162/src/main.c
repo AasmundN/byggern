@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#include "adc.h"
 #include "gpio.h"
 #include "sys.h"
 #include "timer.h"
@@ -29,13 +30,12 @@ pin_config_t pins[NUM_PINS] = {
     } // end HEARTBEAT_LED
 };
 
-volatile bool should_transmit = false;
 volatile unsigned char received_ch;
 
 void uart_receive_cb()
 {
   received_ch = UART_receive();
-  should_transmit = true;
+  printf("Received: %c \r\n", received_ch);
 }
 
 void heartbeat_cb() { GPIO_toggle_pin(&pins[HEARTBEAT_LED]); }
@@ -52,15 +52,18 @@ int main()
   TIMER_init();
   TIMER_set_TIMER1_COMPA_cb(heartbeat_cb);
 
+  ADC_calibrate_joystick();
+
   printf("\r\nSetup complete\r\n");
 
   while (1)
   {
-    if (!should_transmit)
-      continue;
+    joystick_pos_t pos = ADC_get_joystick_pos();
+    printf("\033[2J\033[2;0H\r  ");
+    printf("dir: %d slider1: %d slider2: %d \r\n", ADC_calc_joystick_dir(pos),
+           ADC_get_slider_pos(SLIDER_LEFT_INDEX),
+           ADC_get_slider_pos(SLIDER_RIGHT_INDEX));
 
-    SRAM_test();
-
-    should_transmit = false;
+    _delay_ms(20);
   }
 }
