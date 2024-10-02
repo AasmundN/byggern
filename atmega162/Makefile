@@ -22,6 +22,8 @@ SOURCE_FILES := ./$(SOURCE_DIR)/main.c \
 								./$(SOURCE_DIR)/timer.c \
 								./$(SOURCE_DIR)/adc.c \
 								./$(SOURCE_DIR)/oled.c \
+								./$(SOURCE_DIR)/spi.c \
+								./$(SOURCE_DIR)/can.c \
 
 
 CC := avr-gcc

@@ -1,3 +1,4 @@
+#include "spi.h"
 #define F_CPU 4900000UL
 
 #include <avr/interrupt.h>
@@ -6,6 +7,7 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "can.h"
 #include "gpio.h"
 #include "oled.h"
 #include "sys.h"
@@ -57,6 +59,8 @@ int main()
   OLED_clear_screen();
 
   ADC_calibrate_joystick();
+
+  CAN_init();
 
   printf("\r\nSetup complete\r\n");
   OLED_print("Setup complete", 0, 0);
