@@ -25,6 +25,11 @@
 #define CMD_SET_PAGE_ADDR 0x22
 #define CMD_SET_COL_ADDR 0x21
 
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGTH 64
+
+#define COL_NUM SCREEN_WIDTH
+#define ROW_NUM SCREEN_HEIGTH/8
 
 void OLED_init()
 {
@@ -79,20 +84,29 @@ void OLED_set_pos(int line, int column){
   OLED_goto_column(column, 0, 127);
 }
 
-void OLED_reset(){
+void OLED_write_char_(char ch) {
+  for (int i = 0; i < 8; i++)
+    OLED_DATA_REG = pgm_read_byte(&(font8[ch - 32][i]));
+}
+
+void OLED_clear(){
   OLED_set_pos(0,0);
   for(int i=0; i<128*8; i++){
     OLED_DATA_REG = 0x00;
   }
 }
 
-void OLED_write_char(char ch) {
+void OLED_write_char(char ch, int row, int col) {
   for (int i = 0; i < 8; i++)
     OLED_DATA_REG = pgm_read_byte(&(font8[ch - 32][i]));
 }
 
-void OLED_print(char* str){
+void OLED_print(char* str, int row, int col){
   int i = 0;
-  while (str[i] != '\0')
-    OLED_write_char(str[i++]);
+  while (str[i] != '\0' && i+col<ROW_NUM)
+    OLED_write_char(str[i++], row, col+i);
+}
+
+void OLED_refresh(){
+
 }

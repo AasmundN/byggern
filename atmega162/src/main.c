@@ -54,16 +54,13 @@ int main()
   TIMER_set_TIMER1_COMPA_cb(heartbeat_cb);
 
   OLED_init();
-  OLED_reset(); 
+  OLED_clear(); 
 
   OLED_set_pos(0,0);
-  OLED_write_char('s');
-  OLED_write_char('u');
-  OLED_write_char('S');
-  OLED_print("Sus");
+  OLED_write_char_('s');
+  OLED_write_char_('u');
+  OLED_write_char_('S');
 
-  OLED_set_pos(4, 30);
-  
   ADC_calibrate_joystick();
 
   printf("\r\nSetup complete\r\n");
