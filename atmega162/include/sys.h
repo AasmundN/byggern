@@ -7,9 +7,4 @@
  */
 void SYS_init();
 
-/**
- * Test of external SRAM module
- */
-void SRAM_test();
-
 #endif // __SYS__

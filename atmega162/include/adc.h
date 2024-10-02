@@ -1,6 +1,8 @@
 #ifndef __ADC__
 #define __ADC__
 
+#define ADC_REG (*(uint8_t *)0x1400)
+
 #define NUM_ADC_CHANNELS 4
 
 #define JOYSTICK_X_INDEX 0
