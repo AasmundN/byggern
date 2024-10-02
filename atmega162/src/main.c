@@ -24,7 +24,7 @@ pin_config_t pins[NUM_PINS] = {
 
     // HEARTBEAT_LED
     {
-        PB5,    // pin offset
+        PB2,    // pin offset
         &PORTB, // port
         OUTPUT, // pin direction
         false,  // internal pullup
@@ -54,12 +54,6 @@ int main()
   TIMER_set_TIMER1_COMPA_cb(heartbeat_cb);
 
   OLED_init();
-  OLED_clear(); 
-
-  OLED_set_pos(0,0);
-  OLED_write_char_('s');
-  OLED_write_char_('u');
-  OLED_write_char_('S');
 
   ADC_calibrate_joystick();
 
@@ -67,6 +61,14 @@ int main()
 
   while (1)
   {
+
+    OLED_clear(); 
+
+    OLED_write_char('B',0,0);
+    OLED_write_char('u',1,1);
+    OLED_write_char('s',2,2);
+
+    OLED_refresh();
 
        // joystick_pos_t pos = ADC_get_joystick_pos();
     // printf("\033[2J\033[2;0H\r  ");

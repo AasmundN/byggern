@@ -6,6 +6,7 @@
 
 #define OLED_CMD_REG (*(volatile uint8_t*)0x1000)
 #define OLED_DATA_REG (*(volatile uint8_t*)0x1200)
+#define SRAM_REG_ADDR ((volatile uint8_t*)0x1800)
 
 #define CMD_DISP_OFF 0xae
 #define CMD_SEGMENT_REMAP 0xa1
@@ -28,8 +29,12 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGTH 64
 
-#define COL_NUM SCREEN_WIDTH
-#define ROW_NUM SCREEN_HEIGTH/8
+#define TEXT_WIDTH 8
+#define TEXT_HEIGHT 8
+
+#define COL_NUM SCREEN_WIDTH/TEXT_WIDTH
+#define ROW_NUM SCREEN_HEIGTH/TEXT_HEIGHT
+#define BUFF_SIZE SCREEN_WIDTH*ROW_NUM
 
 void OLED_init()
 {
@@ -91,22 +96,26 @@ void OLED_write_char_(char ch) {
 
 void OLED_clear(){
   OLED_set_pos(0,0);
-  for(int i=0; i<128*8; i++){
-    OLED_DATA_REG = 0x00;
+  for(int i=0; i<BUFF_SIZE; i++){
+    SRAM_REG_ADDR[i] = 0x00;
   }
 }
 
 void OLED_write_char(char ch, int row, int col) {
-  for (int i = 0; i < 8; i++)
-    OLED_DATA_REG = pgm_read_byte(&(font8[ch - 32][i]));
+  for (int i = 0; i < TEXT_WIDTH; i++)
+    SRAM_REG_ADDR[row*(COL_NUM*TEXT_WIDTH)+col*TEXT_WIDTH+i] = pgm_read_byte(&(font8[ch - 32][i]));
 }
 
 void OLED_print(char* str, int row, int col){
   int i = 0;
-  while (str[i] != '\0' && i+col<ROW_NUM)
-    OLED_write_char(str[i++], row, col+i);
+  while (str[i] != '\0' && i+col<COL_NUM){
+    OLED_write_char(str[i], row, col+i);
+    i++;
+  }
 }
 
 void OLED_refresh(){
-
+  OLED_set_pos(0,0);
+  for(int i = 0; i<BUFF_SIZE; i++)
+    OLED_DATA_REG = SRAM_REG_ADDR[i];
 }
