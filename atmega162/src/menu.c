@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "menu.h"
 #include "oled.h"
 
@@ -19,7 +21,8 @@ void MENU_update_state(menu_t *menu, joystick_dir_t dir)
     break;
 
   case LEFT:
-    menu->current = menu->current->parent;
+    if (menu->current->parent != NULL)
+      menu->current = menu->current->parent;
     break;
 
   case RIGHT:
