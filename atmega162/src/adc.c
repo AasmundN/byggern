@@ -4,7 +4,7 @@
 #include "adc.h"
 
 #define T_CONV 32        // microseconds
-#define NEUTRAL_RADIUS 2 // circle around joystick position (0,0)
+#define NEUTRAL_RADIUS 50 // circle around joystick position (0,0)
 
 uint8_t joystick_x_pos_neutral;
 uint8_t joystick_y_pos_neutral;
