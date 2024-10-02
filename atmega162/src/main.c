@@ -6,6 +6,7 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "game_menu.h"
 #include "gpio.h"
 #include "oled.h"
 #include "sys.h"
@@ -53,6 +54,8 @@ int main()
   TIMER_init();
   TIMER_set_TIMER1_COMPA_cb(heartbeat_cb);
 
+  GAME_MENU_init();
+
   OLED_init();
   OLED_clear_screen();
 
@@ -64,5 +67,12 @@ int main()
 
   while (1)
   {
+    joystick_pos_t pos = ADC_get_joystick_pos();
+    joystick_dir_t dir = ADC_calc_joystick_dir(pos);
+
+    MENU_update_state(&game_menu, dir);
+    MENU_draw_page(game_menu.current);
+
+    _delay_ms(250);
   }
 }
