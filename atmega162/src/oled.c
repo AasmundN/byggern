@@ -29,11 +29,11 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGTH 64
 
-#define TEXT_WIDTH 8
-#define TEXT_HEIGHT 8
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 8
 
-#define COL_NUM SCREEN_WIDTH/TEXT_WIDTH
-#define ROW_NUM SCREEN_HEIGTH/TEXT_HEIGHT
+#define COL_NUM SCREEN_WIDTH/FONT_WIDTH
+#define ROW_NUM SCREEN_HEIGTH/FONT_HEIGHT
 #define BUFF_SIZE SCREEN_WIDTH*ROW_NUM
 
 void OLED_init()
@@ -94,7 +94,13 @@ void OLED_write_char_(char ch) {
     OLED_DATA_REG = pgm_read_byte(&(font8[ch - 32][i]));
 }
 
-void OLED_clear(){
+void OLED_clear_line(int row){
+  for(int i=0; i<SCREEN_WIDTH; i++){
+    SRAM_REG_ADDR[row*SCREEN_WIDTH + i] = 0x00;
+  }
+}
+
+void OLED_clear_screen(){
   OLED_set_pos(0,0);
   for(int i=0; i<BUFF_SIZE; i++){
     SRAM_REG_ADDR[i] = 0x00;
@@ -102,8 +108,11 @@ void OLED_clear(){
 }
 
 void OLED_write_char(char ch, int row, int col) {
-  for (int i = 0; i < TEXT_WIDTH; i++)
-    SRAM_REG_ADDR[row*(COL_NUM*TEXT_WIDTH)+col*TEXT_WIDTH+i] = pgm_read_byte(&(font8[ch - 32][i]));
+  for (int i = 0; i < FONT_WIDTH; i++)
+    if(ch>=32)
+      SRAM_REG_ADDR[row*SCREEN_WIDTH + col*FONT_WIDTH + i] = pgm_read_byte(&(font8[ch - 32][i]));
+    else
+      SRAM_REG_ADDR[row*SCREEN_WIDTH + col*FONT_WIDTH + i] = pgm_read_byte(&(fontCustom[ch][i]));
 }
 
 void OLED_print(char* str, int row, int col){

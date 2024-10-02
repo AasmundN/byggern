@@ -54,28 +54,15 @@ int main()
   TIMER_set_TIMER1_COMPA_cb(heartbeat_cb);
 
   OLED_init();
+  OLED_clear_screen();
 
   ADC_calibrate_joystick();
 
   printf("\r\nSetup complete\r\n");
+  OLED_print("Setup complete",0,0);
+  OLED_refresh();
 
   while (1)
   {
-
-    OLED_clear(); 
-
-    OLED_write_char('B',0,0);
-    OLED_write_char('u',1,1);
-    OLED_write_char('s',2,2);
-
-    OLED_refresh();
-
-       // joystick_pos_t pos = ADC_get_joystick_pos();
-    // printf("\033[2J\033[2;0H\r  ");
-    // printf("dir: %d slider1: %d slider2: %d \r\n", ADC_calc_joystick_dir(pos),
-    //        ADC_get_slider_pos(SLIDER_LEFT_INDEX),
-    //        ADC_get_slider_pos(SLIDER_RIGHT_INDEX));
-
-    // _delay_ms(20);
   }
 }
