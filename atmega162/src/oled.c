@@ -79,13 +79,6 @@ void OLED_set_pos(int line, int column){
   OLED_goto_column(column, 0, 127);
 }
 
-// void OLED_clear_line(int line){
-//   OLED_set_pos(line,0);
-//   for(int i=0; i<128; i++){
-//     OLED_DATA_REG = 0x00;
-//   }
-// }
-
 void OLED_reset(){
   OLED_set_pos(0,0);
   for(int i=0; i<128*8; i++){

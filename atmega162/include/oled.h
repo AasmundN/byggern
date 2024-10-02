@@ -7,8 +7,6 @@ void OLED_goto_line(int line, int pageStart, int pageEnd);
 
 void OLED_goto_column(int column, int colStart, int colEnd);
 
-void OLED_clear_line(int line);
-
 void OLED_set_pos(int row, int column);
 
 void OLED_reset();
