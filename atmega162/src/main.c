@@ -6,12 +6,12 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "game_menu.h"
 #include "gpio.h"
 #include "oled.h"
 #include "sys.h"
 #include "timer.h"
 #include "uart.h"
-#include "game_menu.h"
 
 #define NUM_PINS 1
 
