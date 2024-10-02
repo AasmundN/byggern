@@ -1,15 +1,13 @@
 #ifndef __OLED__
 #define __OLED__
 
-
-//Amogus symbol
+// Amogus symbol
 #define MOGUS 0
 
 /**
  * Initialize the OLED module
  */
 void OLED_init();
-
 
 /**
  * Write character to specified position
@@ -25,7 +23,7 @@ void OLED_write_char(char ch, int row, int column);
  * @param row index of the row
  * @param column index of the column
  */
-void OLED_print(char* str, int row, int column);
+void OLED_print(char *str, int row, int column);
 
 /**
  * Clear the specified line

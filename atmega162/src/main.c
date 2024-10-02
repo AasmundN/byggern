@@ -7,10 +7,10 @@
 
 #include "adc.h"
 #include "gpio.h"
+#include "oled.h"
 #include "sys.h"
 #include "timer.h"
 #include "uart.h"
-#include "oled.h"
 
 #define NUM_PINS 1
 
@@ -59,7 +59,7 @@ int main()
   ADC_calibrate_joystick();
 
   printf("\r\nSetup complete\r\n");
-  OLED_print("Setup complete",0,0);
+  OLED_print("Setup complete", 0, 0);
   OLED_refresh();
 
   while (1)
