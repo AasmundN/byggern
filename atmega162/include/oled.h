@@ -4,6 +4,15 @@
 // Amogus symbol
 #define MOGUS 0
 
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGTH 64
+
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 8
+
+#define COL_NUM SCREEN_WIDTH / FONT_WIDTH
+#define ROW_NUM SCREEN_HEIGTH / FONT_HEIGHT
+
 /**
  * Initialize the OLED module
  */
