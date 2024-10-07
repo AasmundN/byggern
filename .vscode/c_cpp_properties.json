@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "AVR",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/lib/avr/include"
+            ],
+            "cStandard": "c17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/avr-gcc",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/usr/lib/avr/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ],
+    "version": 4
+}
