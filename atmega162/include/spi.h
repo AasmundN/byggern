@@ -2,6 +2,7 @@
 #define __SPI__
 
 #define SS_PIN PB4
+#define DONT_CARE 0
 
 typedef enum
 {

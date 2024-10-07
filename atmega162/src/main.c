@@ -75,7 +75,6 @@ int main()
 
   while (1)
   {
-
     _delay_ms(250);
   }
 }
