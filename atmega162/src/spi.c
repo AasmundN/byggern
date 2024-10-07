@@ -4,30 +4,27 @@
 #include "spi.h"
 
 #define MOSI_PIN PB5
+#define MISO_PIN PB6
 #define SCK_PIN PB7
 
 void SPI_init()
 {
-  /* Set MOSI and SCK output, all others input */
+  // set SS, MOSI, SCK output
   DDRB |= (1 << SS_PIN) | (1 << MOSI_PIN) | (1 << SCK_PIN);
 
-  /* Enable SPI, Master, set clock rate fck/16 */
+  // set MISO input
+  DDRB &= ~(1 << MISO_PIN);
+
+  // enable SPI, Master, set clock rate fck/16
   SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0);
 }
 
-void SPI_write_byte(char data)
+char SPI_shift_data(char data)
 {
   // start transmission
   SPDR = data;
 
   // wait for transmission complete
-  while (!(SPSR & (1 << SPIF)))
-    ;
-}
-
-char SPI_read_byte()
-{
-  // wait for reception complete
   while (!(SPSR & (1 << SPIF)))
     ;
 
@@ -40,7 +37,7 @@ void SPI_slave_select(slave_select_t status, int pin)
   if (status == SELECT)
     // slave select low
     PORTB &= ~(1 << pin);
-  else
+  else if (status == DESELECT)
     // slave select high
     PORTB |= (1 << pin);
 }
