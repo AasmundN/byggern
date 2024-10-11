@@ -43,6 +43,13 @@ void uart_receive_cb()
 
 void heartbeat_cb() { GPIO_toggle_pin(&pins[HEARTBEAT_LED]); }
 
+void can_msg_cb(can_msg_t *msg)
+{
+  for (int i = 0; i < msg->data_length; i++)
+    printf("%c", msg->data[i]);
+  printf("\r\n");
+}
+
 int main()
 {
   SYS_init();
@@ -64,6 +71,7 @@ int main()
   ADC_calibrate_joystick();
 
   CAN_init();
+  CAN_set_receive_cb(can_msg_cb);
 
   printf("\r\nSetup complete\r\n");
 
@@ -73,23 +81,17 @@ int main()
 
   char data[] = "Hello";
 
-  can_msg_t received;
   can_msg_t msg = {
       .id = 0,
       .data = data,
-      .data_length = sizeof(data) / sizeof(char),
+      .data_length = 8,
   };
 
   while (1)
   {
     CAN_transmit(&msg);
 
-    if (0 != CAN_receive(&received))
-    {
-      for (int i = 0; i < received.data_length; i++)
-        printf("%c", received.data[i]);
-      printf("\r\n");
-    }
+    CAN_receive();
 
     _delay_ms(250);
   }

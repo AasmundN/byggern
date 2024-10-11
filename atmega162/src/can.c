@@ -3,30 +3,45 @@
 
 #include "MCP2515.h"
 #include "can.h"
-#include "mcp2515_defines.h"
 
-#define TXB0_TXREQ_bm 0b100
+#define CANINTE 0x2b
+#define CANINTF 0x2c
+
+#define TXB0CNTRL 0x3f
+
 #define REQOP_bm 0b11100000
-#define DLC_bm 0b1111
+#define LOOPBACK_MODE 2
 
-#define SIDH_REG_offset 0x1
-#define SIDL_REG_offset 0x2
-#define DLC_REG_offset 0x5
-#define DATA_REG_offset 0x6
+#define TXB0_TXREQ 0b100
+#define TXB0_ADDR 0x30
+#define RXB0_ADDR 0x60
 
 int data_received = 0;
 
-ISR(INT0_vect) { data_received = 1; }
+void (*receive_cb)(can_msg_t *msg);
+
+void default_receive_cb(can_msg_t *msg) {}
+
+void CAN_set_receive_cb(void (*cb)(can_msg_t *)) { receive_cb = cb; }
+
+ISR(INT0_vect)
+{
+  cli();
+
+  data_received = 1;
+
+  sei();
+}
 
 void CAN_init()
 {
   MCP2515_init();
 
   // set loopback mode for transmit buffer 0
-  MCP2515_bit_mod(MCP_TXB0CTRL + MCP_CANCTRL, REQOP_bm, MODE_LOOPBACK);
+  MCP2515_bit_mod(TXB0CNTRL, REQOP_bm, LOOPBACK_MODE << 5);
 
   // enable interrupts on both RX buffers
-  MCP2515_bit_mod(MCP_CANINTE, MCP_RX0IF | MCP_RX1IF, MCP_RX0IF | MCP_RX1IF);
+  MCP2515_bit_mod(CANINTE, 0b11, 0b11);
 
   cli();
 
@@ -42,59 +57,59 @@ void CAN_init()
   // INT0 external interrupt enable
   GICR |= (1 << INT0);
 
+  receive_cb = default_receive_cb;
+
   sei();
 }
 
 int CAN_transmit(can_msg_t *msg)
 {
+  cli();
+
   char status = MCP2515_read_status();
-  if (status & TXB0_TXREQ_bm)
+  if (status & TXB0_TXREQ)
     return 1;
 
-  char TXB0SIDH = msg->id >> 3;
-  char TXB0SIDL = msg->id << 5;
-  char TXB0DLC = msg->data_length;
+  char TXB0SIDH_val = msg->id >> 3;
+  char TXB0SIDL_val = msg->id << 5;
+  char TXB0DLC_val = msg->data_length;
 
-  MCP2515_write(MCP_TXB0CTRL + SIDH_REG_offset, &TXB0SIDH, 1);
-  MCP2515_write(MCP_TXB0CTRL + SIDL_REG_offset, &TXB0SIDL, 1);
-  MCP2515_write(MCP_TXB0CTRL + DLC_REG_offset, &TXB0DLC, 1);
+  MCP2515_write(TXB0_ADDR + 1, &TXB0SIDH_val, 1);
+  MCP2515_write(TXB0_ADDR + 2, &TXB0SIDL_val, 1);
+  MCP2515_write(TXB0_ADDR + 5, &TXB0DLC_val, 1);
 
-  MCP2515_write(MCP_TXB0CTRL + DATA_REG_offset, msg->data, msg->data_length);
+  MCP2515_write(TXB0_ADDR + 6, msg->data, msg->data_length);
 
-  MCP2515_rts(MCP_RTS_TX0);
+  MCP2515_rts(T0);
+
+  sei();
 
   return 0;
 }
 
-int CAN_receive(can_msg_t *received)
+void CAN_receive()
 {
   if (!data_received)
-    return 1;
+    return;
 
-  char CANINTF;
-  MCP2515_read(MCP_CANINTF, &CANINTF, 1);
+  // read out data and make can_msg_t
+  can_msg_t msg;
 
-  char buffer_addr;
+  char TXB0SIDH_val;
+  char TXB0SIDL_val;
+  char TXB0DLC_val;
 
-  if (CANINTF & MCP_RX0IF)
-    buffer_addr = MCP_RXB0CTRL;
-  else if (CANINTF & MCP_RX1IF)
-    buffer_addr = MCP_RXB1CTRL;
+  MCP2515_read(RXB0_ADDR + 1, &TXB0SIDH_val, 1);
+  MCP2515_read(RXB0_ADDR + 2, &TXB0SIDL_val, 1);
+  MCP2515_read(RXB0_ADDR + 5, &TXB0DLC_val, 1);
 
-  char TXB0SIDH, TXB0SIDL, TXB0DLC;
+  msg.id = ((int)TXB0SIDH_val << 3) | (TXB0SIDL_val >> 5);
+  msg.data_length = TXB0DLC_val & 0b1111;
+  MCP2515_read(RXB0_ADDR + 6, msg.data, msg.data_length);
 
-  MCP2515_read(buffer_addr + SIDH_REG_offset, &TXB0SIDH, 1);
-  MCP2515_read(buffer_addr + SIDL_REG_offset, &TXB0SIDL, 1);
-  MCP2515_read(buffer_addr + DLC_REG_offset, &TXB0DLC, 1);
-
-  received->id = ((int)TXB0SIDH << 3) | (TXB0SIDL >> 5);
-  received->data_length = TXB0DLC & DLC_bm;
-
-  MCP2515_read(buffer_addr + DATA_REG_offset, received->data,
-               received->data_length);
+  // receive callback
+  receive_cb(&msg);
 
   // clear interrupt flag
-  MCP2515_bit_mod(MCP_CANINTF, CANINTF & (MCP_RX0IF | MCP_RX1IF), 0);
-
-  return 0;
+  MCP2515_bit_mod(CANINTF, 0b1, 0);
 }
