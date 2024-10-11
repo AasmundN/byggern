@@ -25,6 +25,7 @@ SOURCE_FILES := ./$(SOURCE_DIR)/main.c \
 								./$(SOURCE_DIR)/spi.c \
 								./$(SOURCE_DIR)/can.c \
 								./$(SOURCE_DIR)/menu.c \
+								./$(SOURCE_DIR)/MCP2515.c \
 
 
 CC := avr-gcc
