@@ -23,7 +23,7 @@ menu_t game_menu;
 
 void default_cb(menu_t *menu)
 {
-  printf(menu->current->items[menu->current->selected]->text);
+  printf("%s \r\n", menu->current->items[menu->current->selected]->text);
 }
 
 void enter_child_page_cb(menu_t *menu) { menu->current = &child_page; }
