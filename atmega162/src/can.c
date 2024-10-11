@@ -1,8 +1,8 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
+#include "MCP2515.h"
 #include "can.h"
-#include "mcp2515.h"
 #include "mcp2515_defines.h"
 
 #define TXB0_TXREQ_bm 0b100

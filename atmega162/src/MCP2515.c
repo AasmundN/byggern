@@ -1,6 +1,6 @@
 #include <avr/io.h>
 
-#include "mcp2515.h"
+#include "MCP2515.h"
 #include "mcp2515_defines.h"
 #include "spi.h"
 
