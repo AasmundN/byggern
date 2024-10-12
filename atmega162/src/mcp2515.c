@@ -3,15 +3,7 @@
 #include "mcp2515_defines.h"
 #include "spi.h"
 
-// controller command IDs
-#define WRITE_CMD 0x2
-#define READ_CMD 0x3
-#define RTS_CMD_BASE 0x80
-#define READ_STATUS_CMD 0xa0
-#define BIT_MOD_CMD 0x5
-#define RESET_CMD 0xc0
-
-void MCP2515_read(char addr, char data_buffer[], int buffer_size)
+void MCP2515_read(char addr, char *data_buffer, int buffer_size)
 {
   SPI_slave_select(SELECT, SS_PIN);
 
@@ -25,7 +17,7 @@ void MCP2515_read(char addr, char data_buffer[], int buffer_size)
   SPI_slave_select(DESELECT, SS_PIN);
 }
 
-void MCP2515_write(char addr, char data_buffer[], int buffer_size)
+void MCP2515_write(char addr, char *data_buffer, int buffer_size)
 {
   SPI_slave_select(SELECT, SS_PIN);
 

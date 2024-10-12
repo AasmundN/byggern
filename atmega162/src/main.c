@@ -6,9 +6,9 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "can.h"
 #include "game_menu.h"
 #include "gpio.h"
-#include "mcp2515.h"
 #include "oled.h"
 #include "sys.h"
 #include "timer.h"
@@ -63,7 +63,7 @@ int main()
 
   ADC_calibrate_joystick();
 
-  MCP2515_init();
+  CAN_init();
 
   printf("\r\nSetup complete\r\n");
 
@@ -71,15 +71,23 @@ int main()
   OLED_print("Setup complete", 0, 0);
   OLED_refresh();
 
+  char tx_buffer[MAX_DATA_LENGTH] = "Amobius";
+  char rx_buffer[MAX_DATA_LENGTH];
+
+  can_msg_t msg = {.id = 9, .data = tx_buffer, .data_length = MAX_DATA_LENGTH};
+  can_msg_t received_msg = {.data = rx_buffer};
+
   while (1)
   {
-    char data = 'a';
-    MCP2515_write(0x37, &data, 1);
+    CAN_transmit(&msg);
 
-    char rx;
-    MCP2515_read(0x37, &rx, 1);
+    while (CAN_receive(&received_msg))
+      ;
 
-    printf("%c\r\n", rx);
+    for (int i = 0; i < MAX_DATA_LENGTH; i++)
+      printf("%c", received_msg.data[i]);
+    printf("\r\n");
+
     _delay_ms(250);
   }
 }
