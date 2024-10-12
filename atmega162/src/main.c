@@ -8,6 +8,7 @@
 #include "adc.h"
 #include "game_menu.h"
 #include "gpio.h"
+#include "mcp2515.h"
 #include "oled.h"
 #include "sys.h"
 #include "timer.h"
@@ -62,6 +63,8 @@ int main()
 
   ADC_calibrate_joystick();
 
+  MCP2515_init();
+
   printf("\r\nSetup complete\r\n");
 
   OLED_clear_screen();
@@ -70,6 +73,13 @@ int main()
 
   while (1)
   {
+    char data = 'a';
+    MCP2515_write(0x37, &data, 1);
+
+    char rx;
+    MCP2515_read(0x37, &rx, 1);
+
+    printf("%c\r\n", rx);
     _delay_ms(250);
   }
 }
