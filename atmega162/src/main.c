@@ -6,7 +6,6 @@
 #include <util/delay.h>
 
 #include "adc.h"
-#include "can.h"
 #include "game_menu.h"
 #include "gpio.h"
 #include "oled.h"
@@ -63,34 +62,14 @@ int main()
 
   ADC_calibrate_joystick();
 
-  CAN_init();
-
   printf("\r\nSetup complete\r\n");
 
   OLED_clear_screen();
   OLED_print("Setup complete", 0, 0);
   OLED_refresh();
 
-  char data[] = "Hello";
-
-  can_msg_t received;
-  can_msg_t msg = {
-      .id = 0,
-      .data = data,
-      .data_length = sizeof(data) / sizeof(char),
-  };
-
   while (1)
   {
-    CAN_transmit(&msg);
-
-    if (0 != CAN_receive(&received))
-    {
-      for (int i = 0; i < received.data_length; i++)
-        printf("%c", received.data[i]);
-      printf("\r\n");
-    }
-
     _delay_ms(250);
   }
 }
