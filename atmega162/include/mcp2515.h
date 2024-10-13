@@ -1,6 +1,11 @@
 #ifndef __MCP2515__
 #define __MCP2515__
 
+/**
+ * The following routines implement the MCP2515 SPI interface
+ * See the datasheet for detailed documentation
+ */
+
 void MCP2515_init();
 
 void MCP2515_read(char addr, char data_buffer[], int buffer_size);

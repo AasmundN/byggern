@@ -79,7 +79,8 @@ int main()
 
   while (1)
   {
-    CAN_transmit(&msg);
+    while (CAN_transmit(&msg))
+      ;
 
     while (CAN_receive(&received_msg))
       ;
