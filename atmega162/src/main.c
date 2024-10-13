@@ -71,25 +71,23 @@ int main()
   OLED_print("Setup complete", 0, 0);
   OLED_refresh();
 
-  char data[] = "Hello";
+  char tx_buffer[MAX_DATA_LENGTH] = "Amobius";
+  char rx_buffer[MAX_DATA_LENGTH];
 
-  can_msg_t received;
-  can_msg_t msg = {
-      .id = 0,
-      .data = data,
-      .data_length = sizeof(data) / sizeof(char),
-  };
+  can_msg_t msg = {.id = 9, .data = tx_buffer, .data_length = MAX_DATA_LENGTH};
+  can_msg_t received_msg = {.data = rx_buffer};
 
   while (1)
   {
-    CAN_transmit(&msg);
+    while (CAN_transmit(&msg))
+      ;
 
-    if (0 != CAN_receive(&received))
-    {
-      for (int i = 0; i < received.data_length; i++)
-        printf("%c", received.data[i]);
-      printf("\r\n");
-    }
+    while (CAN_receive(&received_msg))
+      ;
+
+    for (int i = 0; i < MAX_DATA_LENGTH; i++)
+      printf("%c", received_msg.data[i]);
+    printf("\r\n");
 
     _delay_ms(250);
   }

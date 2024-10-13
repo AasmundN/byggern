@@ -1,9 +1,10 @@
 #ifndef __MCP2515__
 #define __MCP2515__
 
-#define T0 1
-#define T1 2
-#define T2 4
+/**
+ * The following routines implement the MCP2515 SPI interface
+ * See the datasheet for detailed documentation
+ */
 
 void MCP2515_init();
 

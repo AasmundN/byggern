@@ -1,16 +1,9 @@
 #include <avr/io.h>
 
-#include "MCP2515.h"
 #include "mcp2515_defines.h"
 #include "spi.h"
 
-void MCP2515_init()
-{
-  SPI_init();
-  MCP2515_reset();
-}
-
-void MCP2515_read(char addr, char data_buffer[], int buffer_size)
+void MCP2515_read(char addr, char *data_buffer, int buffer_size)
 {
   SPI_slave_select(SELECT, SS_PIN);
 
@@ -24,7 +17,7 @@ void MCP2515_read(char addr, char data_buffer[], int buffer_size)
   SPI_slave_select(DESELECT, SS_PIN);
 }
 
-void MCP2515_write(char addr, char data_buffer[], int buffer_size)
+void MCP2515_write(char addr, char *data_buffer, int buffer_size)
 {
   SPI_slave_select(SELECT, SS_PIN);
 
@@ -82,4 +75,10 @@ void MCP2515_reset()
   SPI_shift_data(MCP_RESET);
 
   SPI_slave_select(DESELECT, SS_PIN);
+}
+
+void MCP2515_init()
+{
+  SPI_init();
+  MCP2515_reset();
 }
