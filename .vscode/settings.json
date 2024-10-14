@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "fonts.h": "c"
+        "fonts.h": "c",
+        "sam.h": "c"
     },
     "C_Cpp.default.fallbackStyle": "GNU"
 }

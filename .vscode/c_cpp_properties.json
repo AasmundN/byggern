@@ -4,7 +4,7 @@
             "name": "AVR",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/lib/avr/include"
+                "${workspaceFolder}/atsam3x8e/sam/sam3x/include"
             ],
             "cStandard": "c17",
             "intelliSenseMode": "gcc-x64",
