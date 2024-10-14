@@ -20,9 +20,9 @@ CanInit_t bit_timing = {
 };
 
 CanMsg send_can =  {
-  .id = 1,
+  .id = 69,
   .length = 8,
-  .byte = "amobius"
+  .byte = "AmObiUs"
 };
 
 CanMsg receive_can;
