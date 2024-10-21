@@ -2,6 +2,7 @@
 
 #include <avr/interrupt.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <util/delay.h>
 
