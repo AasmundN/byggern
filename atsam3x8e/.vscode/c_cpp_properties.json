@@ -4,9 +4,7 @@
             "name": "AVR",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/lib/avr/include/avr",
-                "/usr/include/x86_64-linux-gnu/",
-                "/usr/include/"
+                "/usr/lib/avr/include/avr"
             ],
             "cStandard": "c17",
             "intelliSenseMode": "gcc-x64",
