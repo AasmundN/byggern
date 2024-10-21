@@ -1,5 +1,5 @@
-#include "sam.h"
 #include "uart.h"
+#include "sam.h"
 #include <stdio.h>
 
 typedef struct RingBuf RingBuf_t;
@@ -12,35 +12,35 @@ struct RingBuf
   int removeIdx;
   int length;
 };
-RingBuf_t RingBuf = { 0 };
+RingBuf_t RingBuf = {0};
 
-int push (RingBuf_t *rb, uint8_t val)
+int push(RingBuf_t *rb, uint8_t val)
 {
-  if (rb->length >= (sizeof (rb->buffer) / sizeof (rb->buffer[0])))
-    {
-      return 0;
-    }
+  if (rb->length >= (sizeof(rb->buffer) / sizeof(rb->buffer[0])))
+  {
+    return 0;
+  }
   rb->buffer[rb->insertIdx] = val;
-  rb->insertIdx
-      = (rb->insertIdx + 1) % (sizeof (rb->buffer) / sizeof (rb->buffer[0]));
+  rb->insertIdx =
+      (rb->insertIdx + 1) % (sizeof(rb->buffer) / sizeof(rb->buffer[0]));
   rb->length++;
   return 1;
 }
 
-int pop (RingBuf_t *rb, uint8_t *val)
+int pop(RingBuf_t *rb, uint8_t *val)
 {
   if (!rb->length)
-    {
-      return 0;
-    }
+  {
+    return 0;
+  }
   *val = rb->buffer[rb->removeIdx];
-  rb->removeIdx
-      = (rb->removeIdx + 1) % (sizeof (rb->buffer) / sizeof (rb->buffer[0]));
+  rb->removeIdx =
+      (rb->removeIdx + 1) % (sizeof(rb->buffer) / sizeof(rb->buffer[0]));
   rb->length--;
   return 1;
 }
 
-void uart_init (uint32_t cpufreq, uint32_t baudrate)
+void uart_init(uint32_t cpufreq, uint32_t baudrate)
 {
   PMC->PMC_PCER0 |= (1 << ID_UART);
 
@@ -57,59 +57,56 @@ void uart_init (uint32_t cpufreq, uint32_t baudrate)
 
   // Configure interrupts on receive ready and errors
   UART->UART_IDR = 0xFFFFFFFF;
-  UART->UART_IER
-      = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME | UART_IER_PARE;
+  UART->UART_IER =
+      UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME | UART_IER_PARE;
 
   // Enable UART interrupt in the Nested Vectored Interrupt Controller (NVIC)
-  NVIC_EnableIRQ ((IRQn_Type)ID_UART);
+  NVIC_EnableIRQ((IRQn_Type)ID_UART);
 }
 
-void uart_tx (uint8_t val)
+void uart_tx(uint8_t val)
 {
   while (!(UART->UART_SR & UART_SR_TXEMPTY))
-    {
-    }
+  {
+  }
   UART->UART_THR = val;
 }
 
-uint8_t uart_rx (uint8_t *val)
-{
-  return pop (&RingBuf, val);
-}
+uint8_t uart_rx(uint8_t *val) { return pop(&RingBuf, val); }
 
-int uart_flush (char *buf, int len)
+int uart_flush(char *buf, int len)
 {
   int r = 0;
   for (; r < len; r++)
+  {
+    int ret = uart_rx((uint8_t *)&buf[r]);
+    if (!ret)
     {
-      int ret = uart_rx ((uint8_t *)&buf[r]);
-      if (!ret)
-        {
-          break;
-        }
+      break;
     }
+  }
   return r;
 }
 
-void UART_Handler ()
+void UART_Handler()
 {
 
   uint32_t status = UART->UART_SR;
 
   // Errors: Reset UART
   if (status & (UART_SR_OVRE | UART_SR_FRAME | UART_SR_PARE))
-    {
-      UART->UART_CR = UART_CR_RXEN | UART_CR_TXEN | UART_CR_RSTSTA;
-    }
+  {
+    UART->UART_CR = UART_CR_RXEN | UART_CR_TXEN | UART_CR_RSTSTA;
+  }
 
   // Receive ready: push to ring buffer
   if (status & UART_SR_RXRDY)
+  {
+    if (!push(&RingBuf, UART->UART_RHR & 0xff))
     {
-      if (!push (&RingBuf, UART->UART_RHR & 0xff))
-        {
-          printf ("UART receive buffer full\n");
-        }
+      printf("UART receive buffer full\n");
     }
+  }
 }
 
 // See https://interrupt.memfault.com/blog/boostrapping-libc-with-newlib
@@ -117,15 +114,15 @@ void UART_Handler ()
 extern int _end;
 #include <sys/stat.h>
 
-void * _sbrk (int incr)
+void *_sbrk(int incr)
 {
   static unsigned char *heap = NULL;
   unsigned char *prev_heap;
 
   if (heap == NULL)
-    {
-      heap = (unsigned char *)&_end;
-    }
+  {
+    heap = (unsigned char *)&_end;
+  }
   prev_heap = heap;
 
   heap += incr;
@@ -133,72 +130,57 @@ void * _sbrk (int incr)
   return prev_heap;
 }
 
-int _close (int file)
-{
-  return -1;
-}
+int _close(int file) { return -1; }
 
-int _fstat (int file, struct stat *st)
+int _fstat(int file, struct stat *st)
 {
   st->st_mode = S_IFCHR;
   return 0;
 }
 
-int _isatty (int file)
-{
-  return 1;
-}
+int _isatty(int file) { return 1; }
 
-int _lseek (int file, int ptr, int dir)
-{
-  return 0;
-}
+int _lseek(int file, int ptr, int dir) { return 0; }
 
-__attribute__ ((naked)) void _exit (int status)
+__attribute__((naked)) void _exit(int status)
 {
   //__asm("BKPT #0");
 }
 
-void _kill (int pid, int sig)
-{
-  return;
-}
+void _kill(int pid, int sig) { return; }
 
-int _getpid (void)
-{
-  return -1;
-}
+int _getpid(void) { return -1; }
 
-int _write (int file, char *ptr, int len)
+int _write(int file, char *ptr, int len)
 {
   if (file > 1)
-    {
-      return -1;
-    }
+  {
+    return -1;
+  }
 
   for (int idx = 0; idx < len; idx++)
-    {
-      uart_tx ((uint8_t)ptr[idx]);
-    }
+  {
+    uart_tx((uint8_t)ptr[idx]);
+  }
   return len;
 }
 
-int _read (int file, char *ptr, int len)
+int _read(int file, char *ptr, int len)
 {
   if (file > 1)
-    {
-      return -1;
-    }
+  {
+    return -1;
+  }
 
   int nread = 0;
   for (int idx = 0; idx < len; idx++)
+  {
+    int b = uart_rx((uint8_t *)&ptr[idx]);
+    nread += b;
+    if (!b)
     {
-      int b = uart_rx ((uint8_t *)&ptr[idx]);
-      nread += b;
-      if (!b)
-        {
-          return nread;
-        }
+      return nread;
     }
+  }
   return nread;
 }

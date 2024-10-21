@@ -7,7 +7,7 @@
 // Struct with bit timing information
 // See `can_init` for usage example
 typedef struct CanInit CanInit_t;
-__attribute__ ((packed)) struct CanInit
+__attribute__((packed)) struct CanInit
 {
   union
   {
@@ -29,14 +29,14 @@ __attribute__ ((packed)) struct CanInit
 // received. (See can.c for an example interrupt handler) Example:
 //    can_init((CanInit){.brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1,
 //    .propag = 6}, 0);
-void can_init (CanInit_t init, uint8_t rxInterrupt);
+void can_init(CanInit_t init, uint8_t rxInterrupt);
 
 // Strict-aliasing-safe reinterpret-cast
-#define union_cast(type, x)                                                   \
-  (((union {                                                                  \
-     typeof (x) a;                                                            \
-     type b;                                                                  \
-   })x)                                                                       \
+#define union_cast(type, x)                                                    \
+  (((union {                                                                   \
+     typeof(x) a;                                                              \
+     type b;                                                                   \
+   })x)                                                                        \
        .b)
 
 // Dummy type for use with `union_cast`, see below
@@ -86,20 +86,21 @@ struct CanMsg
   };
 };
 
-typedef enum {
+typedef enum
+{
   JOYSTICK_DATA_ID = 42
 } can_id_t;
 
 // Send a CAN message on the bus.
 // Blocks if the bus does not receive the message (typically because one of the
 // receiving nodes has not cleared a buffer)
-void can_tx (CanMsg m);
+void can_tx(CanMsg m);
 
 // Receive a CAN message.
 // Does not block. Returns 0 if there is no message, 1 otherwise
-uint8_t can_rx (CanMsg *m);
+uint8_t can_rx(CanMsg *m);
 
 // Print a CAN message (using `printf`)
-void can_printmsg (CanMsg m);
+void can_printmsg(CanMsg m);
 
 #endif // __CAN__

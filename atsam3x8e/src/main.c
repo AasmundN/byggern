@@ -11,8 +11,8 @@
 #define F_CPU 84000000
 #define BAUDRATE 9600
 
-CanInit_t bit_timing
-    = { .phase2 = 3, .propag = 3, .phase1 = 3, .sjw = 0, .brp = 51, .smp = 0 };
+CanInit_t bit_timing = {
+    .phase2 = 3, .propag = 3, .phase1 = 3, .sjw = 0, .brp = 51, .smp = 0};
 
 CanMsg receive_can;
 
@@ -41,30 +41,28 @@ union
   Byte8 buffer;
 } joystick_data;
 
-int
-main ()
+int main()
 {
-  SystemInit ();
+  SystemInit();
 
   WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
 
-  uart_init (F_CPU, BAUDRATE);
-  can_init (bit_timing, 0);
+  uart_init(F_CPU, BAUDRATE);
+  can_init(bit_timing, 0);
 
   while (1)
-    {
-      while (can_rx (&receive_can))
-        switch (receive_can.id)
-          {
-          case JOYSTICK_DATA_ID:
-            memcpy (&joystick_data.buffer, &receive_can.byte8, sizeof (Byte8));
-            printf ("Joystick dir: %d, Joystick pos: (%d,%d)\r\n",
-                    joystick_data.dir, joystick_data.pos.x,
-                    joystick_data.pos.y);
-            break;
+  {
+    while (can_rx(&receive_can))
+      switch (receive_can.id)
+      {
+      case JOYSTICK_DATA_ID:
+        memcpy(&joystick_data.buffer, &receive_can.byte8, sizeof(Byte8));
+        printf("Joystick dir: %d, Joystick pos: (%d,%d)\r\n", joystick_data.dir,
+               joystick_data.pos.x, joystick_data.pos.y);
+        break;
 
-          default:
-            break;
-          }
-    }
+      default:
+        break;
+      }
+  }
 }
