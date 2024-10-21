@@ -71,24 +71,28 @@ int main()
   OLED_print("Setup complete", 0, 0);
   OLED_refresh();
 
-  char tx_buffer[MAX_DATA_LENGTH] = "Amobius";
-  char rx_buffer[MAX_DATA_LENGTH];
+  union
+  {
+    struct
+    {
+      joystick_dir_t dir : 8;
+      joystick_pos_t pos;
+    };
+    uint8_t buffer[3];
+  } joystick_data;
 
-  can_msg_t msg = {.id = 9, .data = tx_buffer, .data_length = MAX_DATA_LENGTH};
-  can_msg_t received_msg = {.data = rx_buffer};
+  can_msg_t joystick_can_msg = {
+      .id = JOYSITCK_ID, .data = joystick_data.buffer, .data_length = 3};
 
   while (1)
   {
-    while (CAN_transmit(&msg))
-      ;
+    joystick_pos_t pos = ADC_get_joystick_pos();
 
-    while (CAN_receive(&received_msg))
-      ;
+    joystick_data.dir = ADC_calc_joystick_dir(pos);
+    joystick_data.pos = pos;
 
-    for (int i = 0; i < MAX_DATA_LENGTH; i++)
-      printf("%c", received_msg.data[i]);
-    printf("\r\n");
+    CAN_transmit(&joystick_can_msg);
 
-    _delay_ms(250);
+    _delay_ms(200);
   }
 }
