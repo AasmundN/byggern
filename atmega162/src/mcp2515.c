@@ -3,7 +3,7 @@
 #include "mcp2515_defines.h"
 #include "spi.h"
 
-void MCP2515_read(char addr, char *data_buffer, int buffer_size)
+void MCP2515_read(uint8_t addr, uint8_t *data_buffer, int buffer_size)
 {
   SPI_slave_select(SELECT, SS_PIN);
 
@@ -17,7 +17,7 @@ void MCP2515_read(char addr, char *data_buffer, int buffer_size)
   SPI_slave_select(DESELECT, SS_PIN);
 }
 
-void MCP2515_write(char addr, char *data_buffer, int buffer_size)
+void MCP2515_write(uint8_t addr, uint8_t *data_buffer, int buffer_size)
 {
   SPI_slave_select(SELECT, SS_PIN);
 
@@ -40,20 +40,20 @@ void MCP2515_rts(int buffer_select_bits)
   SPI_slave_select(DESELECT, SS_PIN);
 }
 
-char MCP2515_read_status()
+uint8_t MCP2515_read_status()
 {
   SPI_slave_select(SELECT, SS_PIN);
 
   SPI_shift_data(MCP_READ_STATUS);
 
-  char status = SPI_shift_data(DONT_CARE);
+  uint8_t status = SPI_shift_data(DONT_CARE);
 
   SPI_slave_select(DESELECT, SS_PIN);
 
   return status;
 }
 
-void MCP2515_bit_mod(char addr, char mask, char data)
+void MCP2515_bit_mod(uint8_t addr, uint8_t mask, uint8_t data)
 {
   SPI_slave_select(SELECT, SS_PIN);
 

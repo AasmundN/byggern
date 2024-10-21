@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wbitfield-constant-conversion"
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
@@ -22,13 +24,28 @@ void CAN_init()
 {
   MCP2515_init();
 
-  // set loopback mode for TXB0
-  MCP2515_bit_mod(MCP_TXB0CTRL + MCP_CANCTRL, REQOP_bm, MODE_LOOPBACK);
+  uint8_t BRP = 4;
+  uint8_t BTL = 1;
+  uint8_t PRSEG = 3;
+  uint8_t PHSEG1 = 3;
+  uint8_t PHSEG2 = 3;
+
+  uint8_t CNF1 = BRP;
+  MCP2515_write(MCP_CNF1, &CNF1, 1);
+
+  uint8_t CNF2 = (BTL << 7) | (PHSEG1 << 3) | (PRSEG);
+  MCP2515_write(MCP_CNF2, &CNF2, 1);
+
+  uint8_t CNF3 = PHSEG2;
+  MCP2515_write(MCP_CNF3, &CNF3, 1);
+
+  // set normal mode for TXB0
+  MCP2515_bit_mod(MCP_TXB0CTRL + MCP_CANCTRL, REQOP_bm, MODE_NORMAL);
 
   // enable interrupts on RXB0 and RXB1
   MCP2515_bit_mod(MCP_CANINTE, MCP_RX_INT, MCP_RX_INT);
 
-  // disable interrupts on TXB0
+  // disable all transmit interrupts
   MCP2515_bit_mod(MCP_CANINTE, MCP_TX0IF | MCP_TX1IF | MCP_TX2IF, MCP_NO_INT);
 
   cli();
@@ -50,14 +67,16 @@ void CAN_init()
 
 int CAN_transmit(can_msg_t *msg)
 {
+  cli();
+
   // check transmission in progress or invalid data length
-  char status = MCP2515_read_status();
+  uint8_t status = MCP2515_read_status();
   if (status & TXB0_TXREQ_bm | msg->data_length > MAX_DATA_LENGTH)
     return 1;
 
-  char SIDH = msg->id >> 3;
-  char SIDL = msg->id << 5;
-  char DLC = msg->data_length;
+  uint8_t SIDH = msg->id >> 3;
+  uint8_t SIDL = msg->id << 5;
+  uint8_t DLC = msg->data_length;
 
   // write ID and data length
   MCP2515_write(MCP_TXB0CTRL + SIDH_offset, &SIDH, 1);
@@ -69,6 +88,8 @@ int CAN_transmit(can_msg_t *msg)
 
   MCP2515_rts(MCP_RTS_TX0);
 
+  sei();
+
   return 0;
 }
 
@@ -77,22 +98,24 @@ int CAN_receive(can_msg_t *received)
   if (!data_pending)
     return 1;
 
-  char status = MCP2515_read_status();
-  char buffer_addr;
+  cli();
+
+  uint8_t status = MCP2515_read_status();
+  uint8_t buffer_addr;
 
   if (status & MCP_RX0IF)
     buffer_addr = MCP_RXB0CTRL;
   else if (status & MCP_RX1IF)
     buffer_addr = MCP_RXB1CTRL;
 
-  char SIDH, SIDL, DLC;
+  uint8_t SIDH, SIDL, DLC;
 
   // write ID and data length
   MCP2515_read(buffer_addr + SIDH_offset, &SIDH, 1);
   MCP2515_read(buffer_addr + SIDL_offset, &SIDL, 1);
   MCP2515_read(buffer_addr + DLC_offset, &DLC, 1);
 
-  received->id = ((int)SIDH << 3) & (SIDL >> 5);
+  received->id = ((int)SIDH << 3) | ((SIDL & 0b11100000) >> 5);
   received->data_length = DLC & DLC_bm;
 
   // write data
@@ -103,6 +126,8 @@ int CAN_receive(can_msg_t *received)
   MCP2515_bit_mod(MCP_CANINTF, status & MCP_RX_INT, 0);
 
   data_pending = 0;
+
+  sei();
 
   return 0;
 }

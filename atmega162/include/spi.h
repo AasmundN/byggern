@@ -1,6 +1,8 @@
 #ifndef __SPI__
 #define __SPI__
 
+#include <stdint.h>
+
 #define SS_PIN PB4
 #define DONT_CARE 0
 
@@ -17,7 +19,7 @@ void SPI_init();
  * @param data to shift out
  * @return data shifted in
  */
-char SPI_shift_data(char data);
+uint8_t SPI_shift_data(uint8_t data);
 
 /**
  * Pull slave select high/low
