@@ -3,7 +3,7 @@
 
 #include "adc.h"
 
-#define T_CONV 32        // microseconds
+#define T_CONV 32         // microseconds
 #define NEUTRAL_RADIUS 50 // circle around joystick position (0,0)
 
 uint8_t joystick_x_pos_neutral;
@@ -63,7 +63,7 @@ joystick_pos_t ADC_get_joystick_pos()
   return result;
 }
 
-int ADC_get_slider_pos(int slider_index)
+int8_t ADC_get_slider_pos(uint8_t slider_index)
 {
   ADC_read(adc_buffer);
 

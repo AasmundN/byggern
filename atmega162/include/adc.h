@@ -1,6 +1,8 @@
 #ifndef __ADC__
 #define __ADC__
 
+#include <stdint.h>
+
 #define ADC_REG (*(uint8_t *)0x1400)
 
 #define NUM_ADC_CHANNELS 4
@@ -12,8 +14,8 @@
 
 typedef struct
 {
-  int x;
-  int y;
+  int8_t x;
+  int8_t y;
 } joystick_pos_t;
 
 typedef enum
@@ -47,6 +49,6 @@ joystick_dir_t ADC_calc_joystick_dir(joystick_pos_t pos);
  * @param index of slider
  * @return slider position mapped to 0 to 100
  */
-int ADC_get_slider_pos(int slider_index);
+int8_t ADC_get_slider_pos(uint8_t slider_index);
 
 #endif // __ADC__

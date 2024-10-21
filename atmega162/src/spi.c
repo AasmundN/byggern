@@ -19,7 +19,7 @@ void SPI_init()
   SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0);
 }
 
-char SPI_shift_data(char data)
+uint8_t SPI_shift_data(uint8_t data)
 {
   // start transmission
   SPDR = data;

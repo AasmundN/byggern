@@ -1,14 +1,21 @@
 #ifndef __CAN__
 #define __CAN__
 
+#include <stdint.h>
+
 #define MAX_DATA_LENGTH 8
 
 typedef struct
 {
-  int id;
-  char data_length;
-  char *data; // remember to allocate memory for this array
+  uint16_t id;
+  uint8_t data_length;
+  uint8_t *data; // remember to allocate memory for this array
 } can_msg_t;
+
+typedef enum
+{
+  JOYSITCK_ID = 42
+} can_id_t;
 
 void CAN_init();
 
