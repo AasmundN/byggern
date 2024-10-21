@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef __CAN__
+#define __CAN__
 
 #include <stdint.h>
 
@@ -71,6 +72,7 @@ struct Byte8
 //    };
 //    can_printmsg(m);
 //    // Should print: CanMsg(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
+
 typedef struct CanMsg CanMsg;
 struct CanMsg
 {
@@ -84,6 +86,10 @@ struct CanMsg
   };
 };
 
+typedef enum {
+  JOYSTICK_DATA_ID = 42
+} can_id_t;
+
 // Send a CAN message on the bus.
 // Blocks if the bus does not receive the message (typically because one of the
 // receiving nodes has not cleared a buffer)
@@ -95,3 +101,5 @@ uint8_t can_rx (CanMsg *m);
 
 // Print a CAN message (using `printf`)
 void can_printmsg (CanMsg m);
+
+#endif // __CAN__

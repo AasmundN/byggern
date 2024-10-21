@@ -1,4 +1,7 @@
+#ifndef __UART__
+#define __UART__
 
+#include <stdint.h>
 // UART is connected to the ATmega16U2 on the Arduino, which acts as a USB serial device.
 // This module hooks into the stdio functions, by spoofing several system calls
 //
@@ -32,5 +35,7 @@ uint8_t uart_rx(uint8_t* val);
 //        printf("%d\n", result);
 //    }
 int uart_flush(char* buf, int len);
+
+#endif // __UART__
 
    

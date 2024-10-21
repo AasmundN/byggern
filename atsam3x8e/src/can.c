@@ -118,28 +118,3 @@ uint8_t can_rx (CanMsg *m)
   CAN0->CAN_MB[rxMailbox].CAN_MCR |= CAN_MCR_MTCR;
   return 0;
 }
-
-// Example CAN interrupt handler
-void CAN0_Handler (void)
-{
-  char can_sr = CAN0->CAN_SR;
-
-  // RX interrupt
-  if (can_sr & (1 << rxMailbox))
-    {
-      // Add your message-handling code here
-      printf ("CAN0 message arrived in used mailbox\r\n");
-    }
-  else
-    {
-      printf ("CAN0 message arrived in non-used mailbox\r\n");
-    }
-
-  if (can_sr & CAN_SR_MB0)
-    {
-      // Disable interrupt
-      CAN0->CAN_IDR = CAN_IER_MB0;
-    }
-
-  NVIC_ClearPendingIRQ (ID_CAN0);
-}

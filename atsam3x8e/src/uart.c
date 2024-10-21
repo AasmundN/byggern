@@ -1,4 +1,5 @@
 #include "sam.h"
+#include "uart.h"
 #include <stdio.h>
 
 typedef struct RingBuf RingBuf_t;
