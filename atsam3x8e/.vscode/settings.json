@@ -3,5 +3,5 @@
         "sam.h": "c",
         "stat.h": "c"
     },
-    "C_Cpp.default.fallbackStyle": "GNU"
+    "C_Cpp.default.fallbackStyle": "Visual Studio"
 }
