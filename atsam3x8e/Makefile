@@ -6,7 +6,8 @@ MCUTYPE = __SAM3X8E__
 # Use relative file paths.
 SOURCE_FILES=$(BOOTUP) ./src/main.c \
 											 ./src/uart.c \
-											 ./src/can.c
+											 ./src/can.c \
+											 ./src/tc.c
 
 #   filename1.h
 #   filename2.h

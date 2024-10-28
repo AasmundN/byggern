@@ -1,5 +1,6 @@
 #include "can.h"
 #include "sam.h"
+#include "tc.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -49,6 +50,7 @@ int main()
 
   uart_init(F_CPU, BAUDRATE);
   can_init(bit_timing, 0);
+  TC_init();
 
   while (1)
   {
