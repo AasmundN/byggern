@@ -26,8 +26,12 @@ void PWM_stop()
   REG_PWM_DIS |= PWM_DIS_CHID1;
 }
 
+void PWM_start()
+{
+  REG_PWM_ENA |= PWM_ENA_CHID1;
+}
+
 void PWM_set_duty_cycle(uint16_t duty_cycle)
 {
-  REG_PWM_CDTY1 |= PWM_CDTY_CDTY(duty_cycle);
-  REG_PWM_ENA |= PWM_ENA_CHID1;
+  REG_PWM_CDTYUPD1 |= PWM_CDTYUPD_CDTYUPD(duty_cycle);
 }

@@ -8,7 +8,8 @@ SOURCE_FILES=$(BOOTUP) ./src/main.c \
 											 ./src/uart.c \
 											 ./src/can.c \
 											 ./src/tc.c \
-											 ./src/pwm.c
+											 ./src/pwm.c \
+											 ./src/servo.c
 
 #   filename1.h
 #   filename2.h

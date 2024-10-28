@@ -1,6 +1,7 @@
 #include "can.h"
 #include "sam.h"
 #include "pwm.h"
+#include "servo.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -43,6 +44,8 @@ union
   Byte8 buffer;
 } joystick_data;
 
+int8_t servo_pos = 0;
+
 int main()
 {
   SystemInit();
@@ -51,23 +54,32 @@ int main()
 
   uart_init(F_CPU, BAUDRATE);
   can_init(bit_timing, 0);
+
   TC_init();
-  PWM_init(52500);
-  PWM_set_duty_cycle(2610);
+  SERVO_init();
+  SERVO_set_pos(servo_pos);
 
   while (1)
   {
-    while (can_rx(&receive_can))
-      switch (receive_can.id)
-      {
-      case JOYSTICK_DATA_ID:
-        memcpy(&joystick_data.buffer, &receive_can.byte8, sizeof(Byte8));
-        printf("Joystick dir: %d, Joystick pos: (%d,%d)\r\n", joystick_data.dir,
-               joystick_data.pos.x, joystick_data.pos.y);
-        break;
+    while (can_rx(&receive_can));
 
-      default:
-        break;
-      }
+    printf("can rx\r\n");
+
+    switch (receive_can.id)
+    {
+    case JOYSTICK_DATA_ID:
+      memcpy(&joystick_data.buffer, &receive_can.byte8, sizeof(Byte8));
+      printf("Joystick dir: %d, Joystick pos: (%d,%d)\r\n", joystick_data.dir,
+              joystick_data.pos.x, joystick_data.pos.y);
+
+      servo_pos = joystick_data.pos.x;
+      SERVO_set_pos(servo_pos);
+      
+
+      break;
+
+    default:
+      break;
+    }
   }
 }
