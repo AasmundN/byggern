@@ -3,5 +3,6 @@
         "sam.h": "c",
         "stat.h": "c"
     },
-    "C_Cpp.default.fallbackStyle": "Visual Studio"
+    "C_Cpp.clang_format_fallbackStyle": "Visual Studio",
+    "makefile.configureOnOpen": true
 }
