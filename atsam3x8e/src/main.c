@@ -1,9 +1,10 @@
 #include "can.h"
 #include "sam.h"
-#include "tc.h"
+#include "pwm.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include "tc.h"
 
 // Import UART from Node 2 starter code, then edit include path accordingly.
 // Also, remember to update the makefile
@@ -51,6 +52,8 @@ int main()
   uart_init(F_CPU, BAUDRATE);
   can_init(bit_timing, 0);
   TC_init();
+  PWM_init(52500);
+  PWM_set_duty_cycle(2610);
 
   while (1)
   {
