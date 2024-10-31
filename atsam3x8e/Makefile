@@ -9,7 +9,8 @@ SOURCE_FILES=$(BOOTUP) ./src/main.c \
 											 ./src/can.c \
 											 ./src/tc.c \
 											 ./src/pwm.c \
-											 ./src/servo.c
+											 ./src/servo.c \
+											 ./src/adc.c
 
 #   filename1.h
 #   filename2.h

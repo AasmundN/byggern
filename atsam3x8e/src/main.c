@@ -1,11 +1,12 @@
 #include "can.h"
 #include "sam.h"
+#include "tc.h"
 #include "pwm.h"
 #include "servo.h"
+#include "adc.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include "tc.h"
 
 // Import UART from Node 2 starter code, then edit include path accordingly.
 // Also, remember to update the makefile
@@ -59,18 +60,18 @@ int main()
   SERVO_init();
   SERVO_set_pos(servo_pos);
 
+  ADC_init();
+
   while (1)
   {
     while (can_rx(&receive_can));
-
-    printf("can rx\r\n");
 
     switch (receive_can.id)
     {
     case JOYSTICK_DATA_ID:
       memcpy(&joystick_data.buffer, &receive_can.byte8, sizeof(Byte8));
-      printf("Joystick dir: %d, Joystick pos: (%d,%d)\r\n", joystick_data.dir,
-              joystick_data.pos.x, joystick_data.pos.y);
+      //printf("Joystick dir: %d, Joystick pos: (%d,%d)\r\n", joystick_data.dir,
+              //joystick_data.pos.x, joystick_data.pos.y);
 
       servo_pos = joystick_data.pos.x;
       SERVO_set_pos(servo_pos);
