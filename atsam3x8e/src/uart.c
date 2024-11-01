@@ -40,7 +40,7 @@ int pop(RingBuf_t *rb, uint8_t *val)
   return 1;
 }
 
-void uart_init(uint32_t cpufreq, uint32_t baudrate)
+void UART_init(uint32_t cpufreq, uint32_t baudrate)
 {
   PMC->PMC_PCER0 |= (1 << ID_UART);
 
@@ -64,7 +64,7 @@ void uart_init(uint32_t cpufreq, uint32_t baudrate)
   NVIC_EnableIRQ((IRQn_Type)ID_UART);
 }
 
-void uart_tx(uint8_t val)
+void UART_tx(uint8_t val)
 {
   while (!(UART->UART_SR & UART_SR_TXEMPTY))
   {
@@ -72,14 +72,14 @@ void uart_tx(uint8_t val)
   UART->UART_THR = val;
 }
 
-uint8_t uart_rx(uint8_t *val) { return pop(&RingBuf, val); }
+uint8_t UART_rx(uint8_t *val) { return pop(&RingBuf, val); }
 
-int uart_flush(char *buf, int len)
+int UART_flush(char *buf, int len)
 {
   int r = 0;
   for (; r < len; r++)
   {
-    int ret = uart_rx((uint8_t *)&buf[r]);
+    int ret = UART_rx((uint8_t *)&buf[r]);
     if (!ret)
     {
       break;
@@ -160,7 +160,7 @@ int _write(int file, char *ptr, int len)
 
   for (int idx = 0; idx < len; idx++)
   {
-    uart_tx((uint8_t)ptr[idx]);
+    UART_tx((uint8_t)ptr[idx]);
   }
   return len;
 }
@@ -175,7 +175,7 @@ int _read(int file, char *ptr, int len)
   int nread = 0;
   for (int idx = 0; idx < len; idx++)
   {
-    int b = uart_rx((uint8_t *)&ptr[idx]);
+    int b = UART_rx((uint8_t *)&ptr[idx]);
     nread += b;
     if (!b)
     {
