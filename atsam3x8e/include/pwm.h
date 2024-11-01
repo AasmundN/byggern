@@ -1,6 +1,8 @@
 #ifndef __PWM__
 #define __PWM__
 
+#include <stdint.h>
+
 void PWM_init(uint16_t period);
 void PWM_stop();
 void PWM_start();

@@ -1,4 +1,3 @@
-
 #ifndef __CAN__
 #define __CAN__
 
@@ -29,7 +28,7 @@ __attribute__((packed)) struct CanInit
 // received. (See can.c for an example interrupt handler) Example:
 //    can_init((CanInit){.brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1,
 //    .propag = 6}, 0);
-void can_init(CanInit_t init, uint8_t rxInterrupt);
+void CAN_init(CanInit_t init);
 
 // Strict-aliasing-safe reinterpret-cast
 #define union_cast(type, x)                                                    \
@@ -94,13 +93,13 @@ typedef enum
 // Send a CAN message on the bus.
 // Blocks if the bus does not receive the message (typically because one of the
 // receiving nodes has not cleared a buffer)
-void can_tx(CanMsg m);
+void CAN_tx(CanMsg m);
 
 // Receive a CAN message.
 // Does not block. Returns 0 if there is no message, 1 otherwise
-uint8_t can_rx(CanMsg *m);
+uint8_t CAN_rx(CanMsg *m);
 
 // Print a CAN message (using `printf`)
-void can_printmsg(CanMsg m);
+void CAN_printmsg(CanMsg m);
 
 #endif // __CAN__

@@ -67,12 +67,12 @@ void CAN_init()
 
 int CAN_transmit(can_msg_t *msg)
 {
-  cli();
-
   // check transmission in progress or invalid data length
   uint8_t status = MCP2515_read_status();
   if (status & TXB0_TXREQ_bm | msg->data_length > MAX_DATA_LENGTH)
     return 1;
+
+  cli();
 
   uint8_t SIDH = msg->id >> 3;
   uint8_t SIDL = msg->id << 5;

@@ -2,6 +2,7 @@
 #define __UART__
 
 #include <stdint.h>
+
 // UART is connected to the ATmega16U2 on the Arduino, which acts as a USB
 // serial device. This module hooks into the stdio functions, by spoofing
 // several system calls
@@ -14,15 +15,15 @@
 // this buffer size in uart.c
 
 // Initialize. Hooks stdio functions (like `printf`)
-void uart_init(uint32_t cpufreq, uint32_t baudrate);
+void UART_init(uint32_t cpufreq, uint32_t baudrate);
 
 // Send a single character
 // Prefer using `printf` instead
-void uart_tx(uint8_t val);
+void UART_tx(uint8_t val);
 
 // Read a single character
 // Prefer using `uart_flush` and `sscanf` instead (see below)
-uint8_t uart_rx(uint8_t *val);
+uint8_t UART_rx(uint8_t *val);
 
 // Flush the internal ring buffer into your own buffer
 // Example (`scanf` workaround):
@@ -34,7 +35,6 @@ uint8_t uart_rx(uint8_t *val);
 //    if(numFilled == 1){
 //        printf("%d\n", result);
 //    }
-int uart_flush(char *buf, int len);
+int UART_flush(char *buf, int len);
 
 #endif // __UART__
-
