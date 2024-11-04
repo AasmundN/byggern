@@ -25,3 +25,8 @@ void GPIO_toggle_pin(pin_config_t *pin)
   // toggle pin value
   *pin->port ^= (1 << pin->offset);
 }
+
+int GPIO_read_pin(pin_config_t *pin)
+{
+  return !!(*(pin->port - 2 * sizeof(uint8_t)) & (1 << pin->offset));
+}

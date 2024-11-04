@@ -32,4 +32,11 @@ void GPIO_init(pin_config_t *pins, int num_pins);
  */
 void GPIO_toggle_pin(pin_config_t *pin);
 
+/**
+ * Read pin value
+ * @param pin pointer to pin config
+ * @return pin value
+ */
+int GPIO_read_pin(pin_config_t *pin);
+
 #endif // __GPIO__

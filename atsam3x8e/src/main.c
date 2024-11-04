@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <string.h>
 
 #include "adc.h"
@@ -40,11 +41,17 @@ union
 {
   struct
   {
-    joystick_dir_t dir : 8;
-    joystick_pos_t pos;
-  };
+    // joystick
+    joystick_dir_t joystick_dir : 8;
+    joystick_pos_t joystick_pos;
+    uint8_t joystick_btn_state;
+
+    // slider
+    int8_t slider_pos;
+    uint8_t slider_btn_state;
+  } __attribute__((packed));
   Byte8 buffer;
-} joystick_data;
+} input_data;
 
 int8_t servo_pos = 0;
 
@@ -74,10 +81,17 @@ int main()
 
     switch (receive_can.id)
     {
-    case JOYSTICK_DATA_ID:
-      memcpy(&joystick_data.buffer, &receive_can.byte8, sizeof(Byte8));
+    case INPUT_DATA_ID:
+      memcpy(&input_data.buffer, &receive_can.byte8, sizeof(Byte8));
 
-      servo_pos = joystick_data.pos.x;
+      /*
+      printf("%d %d %d %d %d %d \r\n", input_data.joystick_dir,
+             input_data.joystick_pos.x, input_data.joystick_pos.y,
+             input_data.joystick_btn_state, input_data.slider_pos,
+             input_data.slider_btn_state);
+      */
+
+      servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);
 
       break;
