@@ -65,6 +65,8 @@ int main()
 
   ADC_init();
 
+  printf("Setup complete\r\n");
+
   while (1)
   {
     while (CAN_rx(&receive_can))
@@ -74,8 +76,6 @@ int main()
     {
     case JOYSTICK_DATA_ID:
       memcpy(&joystick_data.buffer, &receive_can.byte8, sizeof(Byte8));
-      printf("Joystick dir: %d, Joystick pos: (%d,%d)\r\n", joystick_data.dir,
-             joystick_data.pos.x, joystick_data.pos.y);
 
       servo_pos = joystick_data.pos.x;
       SERVO_set_pos(servo_pos);
