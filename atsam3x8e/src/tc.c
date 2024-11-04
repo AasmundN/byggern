@@ -31,8 +31,6 @@ void TC_init()
 
 void TC0_Handler(void)
 {
-  printf("Timer int\r\n");
-  
   // clear status register by reading
   uint32_t status = TC0->TC_CHANNEL[0].TC_SR;
 

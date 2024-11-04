@@ -7,7 +7,10 @@ MCUTYPE = __SAM3X8E__
 SOURCE_FILES=$(BOOTUP) ./src/main.c \
 											 ./src/uart.c \
 											 ./src/can.c \
-											 ./src/tc.c
+											 ./src/tc.c \
+											 ./src/pwm.c \
+											 ./src/servo.c \
+											 ./src/adc.c
 
 #   filename1.h
 #   filename2.h
