@@ -14,7 +14,7 @@ typedef struct
 
 typedef enum
 {
-  JOYSITCK_ID = 42
+  INPUT_DATA_ID = 42
 } can_id_t;
 
 void CAN_init();

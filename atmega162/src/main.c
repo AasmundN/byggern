@@ -15,11 +15,13 @@
 #include "timer.h"
 #include "uart.h"
 
-#define NUM_PINS 1
+#define NUM_PINS 3
 
 typedef enum
 {
-  HEARTBEAT_LED
+  HEARTBEAT_LED,
+  JOYSTICK_BTN,
+  TOUCH_BTN_LEFT
 } pin_t;
 
 // configure GPIO pins
@@ -31,7 +33,23 @@ pin_config_t pins[NUM_PINS] = {
         .port = &PORTB,
         .direction = OUTPUT,
         .pullup = false,
-    } // end HEARTBEAT_LED
+    }, // end HEARTBEAT_LED
+
+    // JOYSTICK_BTN
+    {
+        .offset = PE0,
+        .port = &PORTE,
+        .direction = INPUT,
+        .pullup = true,
+    }, // end JOYSTICK_BTN
+
+    // TOUCH_BTN_LEFT
+    {
+        .offset = PE2,
+        .port = &PORTE,
+        .direction = INPUT,
+        .pullup = false,
+    } // end TOUCH_BTN_LEFT
 };
 
 volatile unsigned char received_ch;
@@ -76,23 +94,36 @@ int main()
   {
     struct
     {
-      joystick_dir_t dir : 8;
-      joystick_pos_t pos;
-    };
-    uint8_t buffer[3];
-  } joystick_data;
+      // joystick
+      joystick_dir_t joystick_dir : 8;
+      joystick_pos_t joystick_pos;
+      uint8_t joystick_btn_state;
 
-  can_msg_t joystick_can_msg = {
-      .id = JOYSITCK_ID, .data = joystick_data.buffer, .data_length = 3};
+      // slider
+      int8_t slider_pos;
+      uint8_t slider_btn_state;
+    } __attribute__((packed));
+    uint8_t buffer[6];
+  } input_data;
+
+  can_msg_t input_data_can_msg = {
+      .id = INPUT_DATA_ID,
+      .data = input_data.buffer,
+      .data_length = sizeof(input_data.buffer),
+  };
 
   while (1)
   {
     joystick_pos_t pos = ADC_get_joystick_pos();
 
-    joystick_data.dir = ADC_calc_joystick_dir(pos);
-    joystick_data.pos = pos;
+    input_data.joystick_dir = ADC_calc_joystick_dir(pos);
+    input_data.joystick_pos = pos;
+    input_data.joystick_btn_state = GPIO_read_pin(&pins[JOYSTICK_BTN]);
 
-    CAN_transmit(&joystick_can_msg);
+    input_data.slider_pos = ADC_get_slider_pos(SLIDER_LEFT_INDEX);
+    input_data.slider_btn_state = GPIO_read_pin(&pins[TOUCH_BTN_LEFT]);
+
+    CAN_transmit(&input_data_can_msg);
 
     _delay_ms(20);
   }
