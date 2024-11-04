@@ -5,7 +5,7 @@
 
 #define T_CONV 32         // microseconds
 #define NEUTRAL_RADIUS 50 // circle around joystick position (0,0)
-#define SAMPLE_BATCH_SIZE 5
+#define SAMPLE_BATCH_SIZE 10
 
 uint8_t joystick_x_pos_neutral;
 uint8_t joystick_y_pos_neutral;
@@ -44,19 +44,19 @@ joystick_pos_t ADC_get_joystick_pos()
    * accounting for stick drift. I.E. the ADC reading corresponding
    * with 0 is saved in joystick_x_pos_neutral.
    */
-  
+
   uint16_t x_sum = 0, y_sum = 0;
   uint8_t x_average = 0, y_average = 0;
 
-  for(int i=0;i<SAMPLE_BATCH_SIZE;i++) 
+  for (int i = 0; i < SAMPLE_BATCH_SIZE; i++)
   {
     ADC_read(adc_buffer);
     x_sum += adc_buffer[JOYSTICK_X_INDEX];
     y_sum += adc_buffer[JOYSTICK_Y_INDEX];
   }
 
-    x_average = x_sum/SAMPLE_BATCH_SIZE;
-    y_average = y_sum/SAMPLE_BATCH_SIZE;
+  x_average = x_sum / SAMPLE_BATCH_SIZE;
+  y_average = y_sum / SAMPLE_BATCH_SIZE;
 
   int x = x_average <= joystick_x_pos_neutral
               ? (x_average - joystick_x_pos_neutral) * 100 /
@@ -70,7 +70,6 @@ joystick_pos_t ADC_get_joystick_pos()
               : (y_average - joystick_y_pos_neutral) * 100 /
                     (255 - joystick_y_pos_neutral);
 
-        
   joystick_pos_t result = {x, y};
 
   return result;
@@ -94,5 +93,3 @@ joystick_dir_t ADC_calc_joystick_dir(joystick_pos_t pos)
 
   return -pos.x > pos.y ? LEFT : UP;
 }
-
-
