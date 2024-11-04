@@ -94,6 +94,6 @@ int main()
 
     CAN_transmit(&joystick_can_msg);
 
-    _delay_ms(200);
+    _delay_ms(20);
   }
 }
