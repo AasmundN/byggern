@@ -6,6 +6,7 @@
 #include "servo.h"
 #include "tc.h"
 #include "uart.h"
+#include "motor.h"
 
 #define F_CPU 84000000
 #define BAUDRATE 9600
@@ -58,7 +59,7 @@ int main()
 
   CAN_init(bit_timing);
 
-  TC_init();
+  TC2_init();
 
   SERVO_init();
   SERVO_set_pos(servo_pos);
@@ -85,5 +86,8 @@ int main()
     default:
       break;
     }
+    printf("Pos: %d",REG_TC2_CV0);
   }
 }
+
+

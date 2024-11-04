@@ -10,7 +10,8 @@ SOURCE_FILES=$(BOOTUP) ./src/main.c \
 											 ./src/tc.c \
 											 ./src/pwm.c \
 											 ./src/servo.c \
-											 ./src/adc.c
+											 ./src/adc.c \
+											 ./src/motor.c
 
 #   filename1.h
 #   filename2.h
