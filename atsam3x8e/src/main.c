@@ -3,6 +3,7 @@
 
 #include "adc.h"
 #include "can.h"
+#include "encoder.h"
 #include "sam.h"
 #include "servo.h"
 #include "tc.h"
@@ -66,6 +67,7 @@ int main()
   CAN_init(bit_timing);
 
   TC_init();
+  ENCODER_init();
 
   SERVO_init();
   SERVO_set_pos(servo_pos);
