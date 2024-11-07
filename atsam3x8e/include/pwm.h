@@ -3,9 +3,17 @@
 
 #include <stdint.h>
 
-void PWM_init(uint16_t period);
-void PWM_stop();
-void PWM_start();
-void PWM_set_duty_cycle(uint16_t duty_cycle);
+typedef enum
+{
+  SERVO_PWM,
+  MOTOR_PWM
+} pwm_signal_t;
+
+void PWM_init(pwm_signal_t pwm_signal, uint16_t period);
+
+void PWM_stop(pwm_signal_t pwm_signal);
+void PWM_start(pwm_signal_t pwm_signal);
+
+void PWM_set_duty_cycle(pwm_signal_t pwm_signal, uint16_t duty_cycle);
 
 #endif // __PWM__

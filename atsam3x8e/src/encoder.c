@@ -21,3 +21,5 @@ void ENCODER_init()
 
   REG_TC2_BCR |= TC_BCR_SYNC;
 }
+
+int16_t ENCODER_read() { return REG_TC2_CV0; }

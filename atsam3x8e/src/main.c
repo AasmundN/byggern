@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "adc.h"
@@ -56,6 +57,8 @@ union
 
 int8_t servo_pos = 0;
 
+void timer_interrupt_cb() { printf("Pos: %d \r\n", ENCODER_read()); }
+
 int main()
 {
   SystemInit();
@@ -66,8 +69,10 @@ int main()
 
   CAN_init(bit_timing);
 
-  TC_init();
   ENCODER_init();
+
+  TC_init(F_CPU / 1000); // period of 1s
+  TC_set_cb(timer_interrupt_cb);
 
   SERVO_init();
   SERVO_set_pos(servo_pos);
@@ -85,13 +90,6 @@ int main()
     {
     case INPUT_DATA_ID:
       memcpy(&input_data.buffer, &receive_can.byte8, sizeof(Byte8));
-
-      /*
-      printf("%d %d %d %d %d %d \r\n", input_data.joystick_dir,
-             input_data.joystick_pos.x, input_data.joystick_pos.y,
-             input_data.joystick_btn_state, input_data.slider_pos,
-             input_data.slider_btn_state);
-      */
 
       servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);

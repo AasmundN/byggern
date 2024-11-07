@@ -32,7 +32,7 @@ void ADC_Handler(void)
 
   uint16_t adc_data = REG_ADC_LCDR;
 
-  static bool should_count_goal = false;
+  static bool should_count_goal = true;
   if (adc_data < ADC_LOWTHRES && should_count_goal)
   {
     printf("GOAL\r\n");
