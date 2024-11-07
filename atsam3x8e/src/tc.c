@@ -1,7 +1,11 @@
 #include "tc.h"
 #include "sam.h"
 
-void TC_init()
+void (*tc_cb)();
+
+void tc_cb_default() {};
+
+void TC_init(unsigned long period)
 {
   // Configure TC0
 
@@ -17,20 +21,25 @@ void TC_init()
                  TC_CMR_ACPA_SET |            // RA compare effect: set
                  TC_CMR_ACPC_CLEAR;           // RC compare effect: clear
 
-  REG_TC0_RA0 = 2625000 / 2; // Ra 0.5s
-  REG_TC0_RC0 = 2625000;     // Rc 1s
+  REG_TC0_RA0 = (period * 32) / 2; // Ra 0.5s
+  REG_TC0_RC0 = period * 32;       // Rc 1s
 
   REG_TC0_CCR0 |= TC_CCR_CLKEN;
   REG_TC0_CCR0 |= TC_CCR_SWTRG;
+
+  // set timer interrupt callback
+  tc_cb = tc_cb_default;
 
   // Enable the RC compare interrupt
   REG_TC0_IER0 |= TC_IER_CPCS;
   NVIC_EnableIRQ(TC0_IRQn);
 }
 
+void TC_set_cb(void (*cb)()) { tc_cb = cb; }
+
 void TC0_Handler(void)
 {
-  printf("Pos: %d \r\n", REG_TC2_CV0);
+  tc_cb();
 
   uint32_t status = REG_TC0_SR0;  // Read and clear status register
   NVIC_ClearPendingIRQ(TC0_IRQn); // Clear TC interrupt flag

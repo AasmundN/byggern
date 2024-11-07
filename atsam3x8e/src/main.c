@@ -1,11 +1,13 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "adc.h"
 #include "can.h"
-#include "gpio.h"
 #include "encoder.h"
+#include "gpio.h"
+#include "pwm.h"
 #include "sam.h"
 #include "servo.h"
 #include "tc.h"
@@ -20,7 +22,8 @@
 
 pin_config_t pin_configs[] = {
     {SOLENOID_PIN, .direction = OUTPUT, .pullup = false},
-    {MOTOR_DIR_PIN, .direction = OUTPUT, .pullup = false}};
+    {MOTOR_DIR_PIN, .direction = OUTPUT, .pullup = false},
+};
 
 CanInit_t bit_timing = {
     .phase2 = 3,
@@ -33,12 +36,14 @@ CanInit_t bit_timing = {
 
 CanMsg receive_can;
 
-typedef struct {
+typedef struct
+{
   int8_t x;
   int8_t y;
 } joystick_pos_t;
 
-typedef enum {
+typedef enum
+{
   LEFT,
   RIGHT,
   UP,
@@ -46,8 +51,10 @@ typedef enum {
   NEUTRAL,
 } joystick_dir_t;
 
-union {
-  struct {
+union
+{
+  struct
+  {
     // joystick
     joystick_dir_t joystick_dir : 8;
     joystick_pos_t joystick_pos;
@@ -64,7 +71,10 @@ uint8_t prev_btn_state = 1;
 unsigned int btn_on_count = 0;
 int8_t servo_pos = 0;
 
-int main() {
+void timer_interrupt_cb() { printf("Pos: %d \r\n", ENCODER_read()); }
+
+int main()
+{
   SystemInit();
 
   WDT->WDT_MR = WDT_MR_WDDIS; // Disable Watchdog Timer
@@ -73,8 +83,10 @@ int main() {
 
   CAN_init(bit_timing);
 
-  TC_init();
   ENCODER_init();
+
+  TC_init(F_CPU / 1000); // period of 1s
+  TC_set_cb(timer_interrupt_cb);
 
   SERVO_init();
   SERVO_set_pos(servo_pos);
@@ -84,36 +96,37 @@ int main() {
   GPIO_init(pin_configs, NUM_PINS);
   GPIO_write(SOLENOID_PIN, true);
 
+  PWM_init(MOTOR_PWM, 52500);
+  PWM_start(MOTOR_PWM);
+  PWM_set_duty_cycle(MOTOR_PWM, 2363);
+
   printf("Setup complete\r\n");
 
-  while (1) {
+  while (1)
+  {
     while (CAN_rx(&receive_can))
       ;
 
-    switch (receive_can.id) {
+    switch (receive_can.id)
+    {
     case INPUT_DATA_ID:
       memcpy(&input_data.buffer, &receive_can.byte8, sizeof(Byte8));
 
-      /*
-      printf("%d %d %d %d %d %d \r\n", input_data.joystick_dir,
-             input_data.joystick_pos.x, input_data.joystick_pos.y,
-             input_data.joystick_btn_state, input_data.slider_pos,
-             input_data.slider_btn_state);
-      */
-
       servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);
-      if (prev_btn_state != input_data.joystick_btn_state) {
+
+      if (prev_btn_state != input_data.joystick_btn_state)
         GPIO_write(SOLENOID_PIN, !!input_data.joystick_btn_state);
-      }
+
       prev_btn_state = input_data.joystick_btn_state;
+
       if (prev_btn_state)
         btn_on_count = 0;
       else
         btn_on_count++;
-      if (btn_on_count >= 5) {
+
+      if (btn_on_count >= 5)
         GPIO_write(SOLENOID_PIN, 1);
-      }
 
       break;
 
