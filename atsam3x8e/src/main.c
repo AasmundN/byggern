@@ -22,7 +22,8 @@
 
 pin_config_t pin_configs[] = {
     {SOLENOID_PIN, .direction = OUTPUT, .pullup = false},
-    {MOTOR_DIR_PIN, .direction = OUTPUT, .pullup = false}};
+    {MOTOR_DIR_PIN, .direction = OUTPUT, .pullup = false},
+};
 
 CanInit_t bit_timing = {
     .phase2 = 3,
@@ -113,19 +114,19 @@ int main()
 
       servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);
+
       if (prev_btn_state != input_data.joystick_btn_state)
-      {
         GPIO_write(SOLENOID_PIN, !!input_data.joystick_btn_state);
-      }
+
       prev_btn_state = input_data.joystick_btn_state;
+
       if (prev_btn_state)
         btn_on_count = 0;
       else
         btn_on_count++;
+
       if (btn_on_count >= 5)
-      {
         GPIO_write(SOLENOID_PIN, 1);
-      }
 
       break;
 
