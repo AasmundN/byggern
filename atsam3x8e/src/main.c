@@ -5,6 +5,7 @@
 #include "adc.h"
 #include "can.h"
 #include "encoder.h"
+#include "pwm.h"
 #include "sam.h"
 #include "servo.h"
 #include "tc.h"
@@ -78,6 +79,10 @@ int main()
   SERVO_set_pos(servo_pos);
 
   ADC_init();
+
+  PWM_init(MOTOR_PWM, 52500);
+  PWM_start(MOTOR_PWM);
+  PWM_set_duty_cycle(MOTOR_PWM, 2363);
 
   printf("Setup complete\r\n");
 
