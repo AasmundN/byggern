@@ -12,6 +12,7 @@ SOURCE_FILES=$(BOOTUP) ./src/main.c \
 											 ./src/servo.c \
 											 ./src/adc.c \
 											 ./src/gpio.c \
+											 ./src/motor.c \
 											 ./src/encoder.c
 
 #   filename1.h

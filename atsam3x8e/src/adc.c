@@ -35,7 +35,7 @@ void ADC_Handler(void)
   static bool should_count_goal = true;
   if (adc_data < ADC_LOWTHRES && should_count_goal)
   {
-    printf("GOAL\r\n");
+    /*printf("GOAL\r\n");*/
     should_count_goal = false;
   }
   else if (adc_data > ADC_HIGHTHRES)

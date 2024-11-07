@@ -3,12 +3,14 @@
 
 #include "sam.h"
 
-typedef enum {
+typedef enum
+{
   INPUT,
   OUTPUT,
 } pin_direction_t;
 
-typedef struct {
+typedef struct
+{
   volatile Pio *pio;
   uint32_t pin;
   pin_direction_t direction;

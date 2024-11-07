@@ -2,8 +2,10 @@
 #include "sam.h"
 #include <stdbool.h>
 
-void GPIO_init(pin_config_t *configs, int num_pins) {
-  for (int i = 0; i < num_pins; i++) {
+void GPIO_init(pin_config_t *configs, int num_pins)
+{
+  for (int i = 0; i < num_pins; i++)
+  {
     configs[i].pio->PIO_PER |= configs[i].pin;
 
     if (configs[i].direction == OUTPUT)
@@ -18,7 +20,8 @@ void GPIO_init(pin_config_t *configs, int num_pins) {
   }
 }
 
-void GPIO_write(Pio *pio, uint32_t pin, bool value) {
+void GPIO_write(Pio *pio, uint32_t pin, bool value)
+{
   if (value == true)
     pio->PIO_SODR |= pin;
   else
