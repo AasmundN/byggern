@@ -5,6 +5,7 @@
 #include "adc.h"
 #include "can.h"
 #include "gpio.h"
+#include "encoder.h"
 #include "sam.h"
 #include "servo.h"
 #include "tc.h"
@@ -73,6 +74,7 @@ int main() {
   CAN_init(bit_timing);
 
   TC_init();
+  ENCODER_init();
 
   SERVO_init();
   SERVO_set_pos(servo_pos);
@@ -112,7 +114,6 @@ int main() {
       if (btn_on_count >= 5) {
         GPIO_write(SOLENOID_PIN, 1);
       }
-      printf("%u\n\r", btn_on_count);
 
       break;
 
