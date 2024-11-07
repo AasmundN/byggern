@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,6 +6,7 @@
 #include "adc.h"
 #include "can.h"
 #include "encoder.h"
+#include "gpio.h"
 #include "pwm.h"
 #include "sam.h"
 #include "servo.h"
@@ -13,6 +15,14 @@
 
 #define F_CPU 84000000
 #define BAUDRATE 9600
+
+#define NUM_PINS 2
+#define SOLENOID_PIN PIOB, PIO_PB19
+#define MOTOR_DIR_PIN PIOC, PIO_PC23
+
+pin_config_t pin_configs[] = {
+    {SOLENOID_PIN, .direction = OUTPUT, .pullup = false},
+    {MOTOR_DIR_PIN, .direction = OUTPUT, .pullup = false}};
 
 CanInit_t bit_timing = {
     .phase2 = 3,
@@ -56,6 +66,8 @@ union
   Byte8 buffer;
 } input_data;
 
+uint8_t prev_btn_state = 1;
+unsigned int btn_on_count = 0;
 int8_t servo_pos = 0;
 
 void timer_interrupt_cb() { printf("Pos: %d \r\n", ENCODER_read()); }
@@ -80,6 +92,9 @@ int main()
 
   ADC_init();
 
+  GPIO_init(pin_configs, NUM_PINS);
+  GPIO_write(SOLENOID_PIN, true);
+
   PWM_init(MOTOR_PWM, 52500);
   PWM_start(MOTOR_PWM);
   PWM_set_duty_cycle(MOTOR_PWM, 2363);
@@ -98,6 +113,19 @@ int main()
 
       servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);
+      if (prev_btn_state != input_data.joystick_btn_state)
+      {
+        GPIO_write(SOLENOID_PIN, !!input_data.joystick_btn_state);
+      }
+      prev_btn_state = input_data.joystick_btn_state;
+      if (prev_btn_state)
+        btn_on_count = 0;
+      else
+        btn_on_count++;
+      if (btn_on_count >= 5)
+      {
+        GPIO_write(SOLENOID_PIN, 1);
+      }
 
       break;
 
