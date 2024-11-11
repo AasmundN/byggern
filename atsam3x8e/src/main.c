@@ -119,7 +119,7 @@ int main()
       else
         btn_on_count++;
 
-      if (btn_on_count >= 2)
+      if (btn_on_count >= 5)
         GPIO_write(SOLENOID_PIN, 1);
 
       break;
