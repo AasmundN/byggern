@@ -112,6 +112,8 @@ int main()
       .data_length = sizeof(input_data.buffer),
   };
 
+  can_msg_t received_can_msg;
+
   while (1)
   {
     joystick_pos_t pos = ADC_get_joystick_pos();
@@ -124,6 +126,9 @@ int main()
     input_data.slider_btn_state = GPIO_read_pin(&pins[TOUCH_BTN_LEFT]);
 
     CAN_transmit(&input_data_can_msg);
+
+    if (!CAN_receive(&received_can_msg))
+      printf("%d\r\n", received_can_msg.id);
 
     _delay_ms(20);
   }

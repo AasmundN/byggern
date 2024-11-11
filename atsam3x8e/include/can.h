@@ -87,7 +87,8 @@ struct CanMsg
 
 typedef enum
 {
-  INPUT_DATA_ID = 42
+  INPUT_DATA_ID = 42,
+  GAME_END_ID = 69
 } can_id_t;
 
 // Send a CAN message on the bus.

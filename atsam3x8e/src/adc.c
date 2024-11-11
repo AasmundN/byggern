@@ -1,6 +1,6 @@
 #include "adc.h"
+#include "can.h"
 #include "sam.h"
-#include "sam3x8e.h"
 
 #define ADC_LOWTHRES 300
 #define ADC_HIGHTHRES 400
@@ -26,6 +26,7 @@ void ADC_init()
   REG_ADC_CHER |= ADC_CHER_CH13;
 }
 
+
 void ADC_Handler(void)
 {
   if (!(REG_ADC_ISR & ADC_ISR_COMPE))
@@ -33,18 +34,26 @@ void ADC_Handler(void)
 
   uint16_t adc_data = REG_ADC_LCDR;
 
-  static bool should_count_goal = true;
+  static bool should_end_game = true;
   static int repeated_under_thresh = 0;
 
-  if (adc_data < ADC_LOWTHRES && should_count_goal && ++repeated_under_thresh > MIN_REPEATED_UNDER_THRESHOLD)
+  if (adc_data < ADC_LOWTHRES && should_end_game && ++repeated_under_thresh > MIN_REPEATED_UNDER_THRESHOLD)
   {
-    printf("GOAL %d\r\n",adc_data);
-    should_count_goal = false;
+    printf("End of game\r\n");
+
+    CanMsg goal_msg = {
+      .id = GAME_END_ID,
+      .length = 1,
+    };
+
+    CAN_tx(goal_msg);
+
+    should_end_game = false;
     repeated_under_thresh = 0;
   }
   else if (adc_data > ADC_HIGHTHRES)
   {
-    should_count_goal = true;
+    should_end_game = true;
   }
 
   NVIC_ClearPendingIRQ(ADC_IRQn);
