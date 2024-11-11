@@ -5,24 +5,25 @@
 
 #include "adc.h"
 #include "can.h"
-#include "encoder.h"
 #include "gpio.h"
-#include "pwm.h"
+#include "motor.h"
 #include "sam.h"
 #include "servo.h"
-#include "tc.h"
 #include "uart.h"
 
 #define F_CPU 84000000
 #define BAUDRATE 9600
 
-#define NUM_PINS 2
+#define NUM_PINS 1
+
 #define SOLENOID_PIN PIOB, PIO_PB19
-#define MOTOR_DIR_PIN PIOC, PIO_PC23
 
 pin_config_t pin_configs[] = {
-    {SOLENOID_PIN, .direction = OUTPUT, .pullup = false},
-    {MOTOR_DIR_PIN, .direction = OUTPUT, .pullup = false},
+    {
+        SOLENOID_PIN,
+        .direction = OUTPUT,
+        .pullup = false,
+    },
 };
 
 CanInit_t bit_timing = {
@@ -71,8 +72,6 @@ uint8_t prev_btn_state = 1;
 unsigned int btn_on_count = 0;
 int8_t servo_pos = 0;
 
-void timer_interrupt_cb() { printf("Pos: %d \r\n", ENCODER_read()); }
-
 int main()
 {
   SystemInit();
@@ -83,11 +82,6 @@ int main()
 
   CAN_init(bit_timing);
 
-  ENCODER_init();
-
-  TC_init(F_CPU / 1000); // period of 1s
-  TC_set_cb(timer_interrupt_cb);
-
   SERVO_init();
   SERVO_set_pos(servo_pos);
 
@@ -96,9 +90,7 @@ int main()
   GPIO_init(pin_configs, NUM_PINS);
   GPIO_write(SOLENOID_PIN, true);
 
-  PWM_init(MOTOR_PWM, 52500);
-  PWM_start(MOTOR_PWM);
-  PWM_set_duty_cycle(MOTOR_PWM, 2363);
+  MOTOR_init();
 
   printf("Setup complete\r\n");
 
@@ -114,6 +106,8 @@ int main()
 
       servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);
+
+      MOTOR_set_pos(input_data.slider_pos);
 
       if (prev_btn_state != input_data.joystick_btn_state)
         GPIO_write(SOLENOID_PIN, !!input_data.joystick_btn_state);

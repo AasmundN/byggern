@@ -19,7 +19,7 @@ void PWM_init(pwm_signal_t pwm_signal, uint16_t period)
     REG_PIOB_PDR |= PIO_PB12B_PWMH0;  // Disable PIO control
     REG_PIOB_ABSR |= PIO_PB12B_PWMH0; // Select PWMH0 peripheral B
 
-    REG_PWM_CMR0 |= PWM_CMR_CPRE_MCK_DIV_32 | PWM_CMR_CPOL; // MCK/32 clock
+    REG_PWM_CMR0 |= PWM_CMR_CPRE_MCK_DIV_8 | PWM_CMR_CPOL; // MCK/32 clock
     REG_PWM_CPRD0 |= PWM_CPRD_CPRD(period);
     REG_PWM_CDTY0 |= PWM_CDTY_CDTY(0);
   }

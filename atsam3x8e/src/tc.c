@@ -21,8 +21,8 @@ void TC_init(unsigned long period)
                  TC_CMR_ACPA_SET |            // RA compare effect: set
                  TC_CMR_ACPC_CLEAR;           // RC compare effect: clear
 
-  REG_TC0_RA0 = (period * 32) / 2; // Ra 0.5s
-  REG_TC0_RC0 = period * 32;       // Rc 1s
+  REG_TC0_RA0 = period / 2;
+  REG_TC0_RC0 = period;
 
   REG_TC0_CCR0 |= TC_CCR_CLKEN;
   REG_TC0_CCR0 |= TC_CCR_SWTRG;
