@@ -4,7 +4,7 @@
 
 #define ADC_LOWTHRES 300
 #define ADC_HIGHTHRES 400
-#define MIN_REPEATED_UNDER_THRESHOLD 10
+#define MIN_REPEATED_UNDER_THRESHOLD 40
 
 void ADC_init()
 {
@@ -26,7 +26,6 @@ void ADC_init()
   REG_ADC_CHER |= ADC_CHER_CH13;
 }
 
-
 void ADC_Handler(void)
 {
   if (!(REG_ADC_ISR & ADC_ISR_COMPE))
@@ -37,13 +36,14 @@ void ADC_Handler(void)
   static bool should_end_game = true;
   static int repeated_under_thresh = 0;
 
-  if (adc_data < ADC_LOWTHRES && should_end_game && ++repeated_under_thresh > MIN_REPEATED_UNDER_THRESHOLD)
+  if (adc_data < ADC_LOWTHRES && should_end_game
+      && ++repeated_under_thresh > MIN_REPEATED_UNDER_THRESHOLD)
   {
     printf("End of game\r\n");
 
     CanMsg goal_msg = {
-      .id = GAME_END_ID,
-      .length = 1,
+        .id = GAME_END_ID,
+        .length = 1,
     };
 
     CAN_tx(goal_msg);
