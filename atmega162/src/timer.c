@@ -3,6 +3,11 @@
 
 #include "timer.h"
 
+time_t game_timer = {
+    .minutes = 0,
+    .seconds = 0,
+};
+
 void (*TIMER1_COMPA_cb)();
 
 void default_TIMER1_COMPA_cb() {}
@@ -18,7 +23,7 @@ void TIMER_init()
   TCNT1 = 0;
 
   // TIMER1: count to roughly 750ms
-  OCR1A = 3520;
+  OCR1A = 4600;
 
   // TIMER1: compare A interrupt enable
   TIMSK |= (1 << OCIE1A);
@@ -30,4 +35,23 @@ void TIMER_init()
 
 void TIMER_set_TIMER1_COMPA_cb(void (*cb)()) { TIMER1_COMPA_cb = cb; }
 
-ISR(TIMER1_COMPA_vect) { TIMER1_COMPA_cb(); }
+ISR(TIMER1_COMPA_vect)
+{
+  TIMER1_COMPA_cb();
+
+  game_timer.seconds++;
+
+  if (game_timer.seconds < 60)
+    return;
+
+  game_timer.seconds = 0;
+  game_timer.minutes++;
+}
+
+void TIMER_start_game_timer()
+{
+  game_timer.minutes = 0;
+  game_timer.seconds = 0;
+}
+
+time_t TIMER_get_game_time() { return game_timer; }
