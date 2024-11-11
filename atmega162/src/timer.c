@@ -23,7 +23,7 @@ void TIMER_init()
   TCNT1 = 0;
 
   // TIMER1: count to roughly 750ms
-  OCR1A = 4600;
+  OCR1A = 4693;
 
   // TIMER1: compare A interrupt enable
   TIMSK |= (1 << OCIE1A);
