@@ -23,8 +23,9 @@ typedef struct menu_page
 
 typedef enum
 {
-  INACTIVE,
-  ACTIVE
+  MENU,
+  GAME,
+  GAME_OVER,
 } menu_state_t;
 
 typedef struct menu
