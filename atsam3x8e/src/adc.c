@@ -46,7 +46,7 @@ void ADC_Handler(void)
         .length = 1,
     };
 
-    CAN_tx(goal_msg);
+    /*CAN_tx(goal_msg);*/
 
     should_end_game = false;
     repeated_under_thresh = 0;
