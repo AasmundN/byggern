@@ -26,12 +26,12 @@ typedef enum
   MENU,
   GAME,
   GAME_OVER,
-} menu_state_t;
+} game_state_t;
 
 typedef struct menu
 {
   menu_page_t *current;
-  menu_state_t state;
+  game_state_t state;
 } menu_t;
 
 /**

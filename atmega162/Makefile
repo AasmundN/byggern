@@ -24,6 +24,7 @@ SOURCE_FILES := ./$(SOURCE_DIR)/main.c \
 								./$(SOURCE_DIR)/oled.c \
 								./$(SOURCE_DIR)/spi.c \
 								./$(SOURCE_DIR)/menu.c \
+								./$(SOURCE_DIR)/game.c\
 								./$(SOURCE_DIR)/mcp2515.c \
 								./$(SOURCE_DIR)/can.c \
 
