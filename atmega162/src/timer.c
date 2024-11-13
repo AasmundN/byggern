@@ -48,7 +48,7 @@ ISR(TIMER1_COMPA_vect)
   game_timer.minutes++;
 }
 
-void TIMER_start_game_timer()
+void TIMER_reset_game_timer()
 {
   game_timer.minutes = 0;
   game_timer.seconds = 0;
