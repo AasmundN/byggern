@@ -14,6 +14,7 @@ typedef struct
 
 typedef enum
 {
+  STOP_MOTOR_ID = 21,
   INPUT_DATA_ID = 42,
   END_GAME_ID = 69,
 } can_id_t;
