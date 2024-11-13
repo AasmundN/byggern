@@ -23,14 +23,15 @@ typedef struct menu_page
 
 typedef enum
 {
-  INACTIVE,
-  ACTIVE
-} menu_state_t;
+  MENU,
+  GAME,
+  GAME_OVER,
+} game_state_t;
 
 typedef struct menu
 {
   menu_page_t *current;
-  menu_state_t state;
+  game_state_t state;
 } menu_t;
 
 /**

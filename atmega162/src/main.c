@@ -5,15 +5,17 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <util/delay.h>
+#include <string.h>
 
 #include "adc.h"
 #include "can.h"
-#include "game_menu.h"
+#include "game.h"
 #include "gpio.h"
 #include "oled.h"
 #include "sys.h"
 #include "timer.h"
 #include "uart.h"
+#include "menu.h"
 
 #define NUM_PINS 3
 
@@ -74,7 +76,7 @@ int main()
   TIMER_init();
   TIMER_set_TIMER1_COMPA_cb(heartbeat_cb);
 
-  GAME_MENU_init();
+  GAME_init();
 
   OLED_init();
   OLED_clear_screen();
@@ -114,22 +116,33 @@ int main()
 
   can_msg_t received_can_msg;
 
+  int gameover = 0;
+
   while (1)
   {
     joystick_pos_t pos = ADC_get_joystick_pos();
+    joystick_dir_t dir = ADC_calc_joystick_dir(pos);
+    int joystick_btn = GPIO_read_pin(&pins[JOYSTICK_BTN]);
+    int slider_btn = GPIO_read_pin(&pins[TOUCH_BTN_LEFT]);
 
-    input_data.joystick_dir = ADC_calc_joystick_dir(pos);
-    input_data.joystick_pos = pos;
-    input_data.joystick_btn_state = GPIO_read_pin(&pins[JOYSTICK_BTN]);
+    game_state_t state = GAME_loop(dir, joystick_btn, slider_btn, gameover);
 
-    input_data.slider_pos = ADC_get_slider_pos(SLIDER_LEFT_INDEX);
-    input_data.slider_btn_state = GPIO_read_pin(&pins[TOUCH_BTN_LEFT]);
+    if(state == GAME){
+      input_data.joystick_dir = dir;
+      input_data.joystick_pos = pos;
+      input_data.joystick_btn_state = joystick_btn;
+      input_data.slider_pos = ADC_get_slider_pos(SLIDER_LEFT_INDEX);
+      input_data.slider_btn_state = slider_btn;
 
-    CAN_transmit(&input_data_can_msg);
+      CAN_transmit(&input_data_can_msg);
+    }
 
+    gameover = 0;
     if (!CAN_receive(&received_can_msg))
-      printf("%d\r\n", received_can_msg.id);
+    {
+      gameover = received_can_msg.id==END_GAME_ID;
+    }
 
-    _delay_ms(20);
+    _delay_ms(10);
   }
 }
