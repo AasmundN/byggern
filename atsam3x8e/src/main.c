@@ -109,6 +109,8 @@ int main()
 
       MOTOR_set_pos(input_data.slider_pos);
 
+      printf("%d\r\n", input_data.joystick_btn_state);
+
       if (prev_btn_state != input_data.joystick_btn_state)
         GPIO_write(SOLENOID_PIN, !!input_data.joystick_btn_state);
 

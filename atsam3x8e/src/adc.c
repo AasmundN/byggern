@@ -4,7 +4,7 @@
 
 #define ADC_LOWTHRES 200
 #define ADC_HIGHTHRES 700
-#define MIN_REPEATED_UNDER_THRESHOLD 30
+#define MIN_REPEATED_UNDER_THRESHOLD 50
 
 void ADC_init()
 {
@@ -46,7 +46,7 @@ void ADC_Handler(void)
         .length = 1,
     };
 
-    /*CAN_tx(goal_msg);*/
+    CAN_tx(goal_msg);
 
     should_end_game = false;
     repeated_under_thresh = 0;
