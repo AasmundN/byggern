@@ -9,10 +9,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define SAMPLING_PERIOD 2625 // 1ms
+#define SAMPLING_PERIOD 262500 // 1ms
 
 #define Kp 0.1
-#define T 0.001 // 1ms in s
+#define T 0.1 // 1ms in s
 #define Ki 0.1
 
 #define ENCODER_MAX 5000
@@ -54,8 +54,8 @@ void MOTOR_controller_tick()
 void MOTOR_init()
 {
   PWM_init(MOTOR_PWM, MOTOR_PWM_PERIOD);
+  PWM_set_duty_cycle(MOTOR_PWM, 0);
   PWM_start(MOTOR_PWM);
-  PWM_set_duty_cycle(MOTOR_PWM, MOTOR_PWM_PERIOD / 4);
 
   GPIO_init(&motor_pin, 1);
   GPIO_write(MOTOR_DIR_PIN, 1);
@@ -64,6 +64,14 @@ void MOTOR_init()
   TC_set_cb(MOTOR_controller_tick);
 
   ENCODER_init();
+}
+
+void MOTOR_start() { TC_enable(); }
+
+void MOTOR_stop()
+{
+  TC_disable();
+  PWM_set_duty_cycle(MOTOR_PWM, 0);
 }
 
 void MOTOR_set_pos(int8_t pos) { motor_pos = pos; }

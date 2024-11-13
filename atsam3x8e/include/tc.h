@@ -13,4 +13,14 @@ void TC_init(unsigned long period);
  */
 void TC_set_cb(void (*cb)());
 
+/**
+ * Enable timer counter
+ */
+void TC_enable();
+
+/**
+ * Disable timer counter
+ */
+void TC_disable();
+
 #endif // __TC__
