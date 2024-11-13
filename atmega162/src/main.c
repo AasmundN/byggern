@@ -117,6 +117,7 @@ int main()
   can_msg_t received_can_msg;
 
   int gameover = 0;
+  game_state_t prev_state = MENU;
 
   while (1)
   {
@@ -136,6 +137,14 @@ int main()
 
       CAN_transmit(&input_data_can_msg);
     }
+    
+    if(state != prev_state && prev_state == GAME){
+      can_msg_t stop_motor_msg = {
+        .id = STOP_MOTOR_ID,
+        .data_length = 1
+      };
+      CAN_transmit(&stop_motor_msg);
+    }
 
     gameover = 0;
     if (!CAN_receive(&received_can_msg))
@@ -143,6 +152,7 @@ int main()
       gameover = received_can_msg.id==END_GAME_ID;
     }
 
+    prev_state = state;
     _delay_ms(10);
   }
 }
