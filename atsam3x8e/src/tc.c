@@ -1,6 +1,5 @@
 #include "tc.h"
 #include "sam.h"
-#include "sam3x8e.h"
 
 void (*tc_cb)();
 
