@@ -24,18 +24,21 @@ void TC_init(unsigned long period)
   REG_TC0_RA0 = period / 2;
   REG_TC0_RC0 = period;
 
-  REG_TC0_CCR0 |= TC_CCR_CLKEN;
-  REG_TC0_CCR0 |= TC_CCR_SWTRG;
-
   // set timer interrupt callback
   tc_cb = tc_cb_default;
 
+  REG_TC0_CCR0 |= TC_CCR_CLKEN;
+  REG_TC0_CCR0 |= TC_CCR_SWTRG;
+
   // Enable the RC compare interrupt
   REG_TC0_IER0 |= TC_IER_CPCS;
-  NVIC_EnableIRQ(TC0_IRQn);
 }
 
 void TC_set_cb(void (*cb)()) { tc_cb = cb; }
+
+void TC_enable() { NVIC_EnableIRQ(TC0_IRQn); }
+
+void TC_disable() { NVIC_DisableIRQ(TC0_IRQn); }
 
 void TC0_Handler(void)
 {

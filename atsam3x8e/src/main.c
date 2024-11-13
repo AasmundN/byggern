@@ -70,6 +70,7 @@ union
 
 uint8_t prev_btn_state = 1;
 unsigned int btn_on_count = 0;
+bool game_running = false;
 int8_t servo_pos = 0;
 
 int main()
@@ -104,12 +105,16 @@ int main()
     case INPUT_DATA_ID:
       memcpy(&input_data.buffer, &receive_can.byte8, sizeof(Byte8));
 
+      if (!game_running)
+      {
+        game_running = true;
+        MOTOR_start();
+      }
+
       servo_pos = input_data.joystick_pos.x;
       SERVO_set_pos(servo_pos);
 
       MOTOR_set_pos(input_data.slider_pos);
-
-      printf("%d\r\n", input_data.joystick_btn_state);
 
       if (prev_btn_state != input_data.joystick_btn_state)
         GPIO_write(SOLENOID_PIN, !!input_data.joystick_btn_state);
@@ -123,6 +128,14 @@ int main()
 
       if (btn_on_count >= 5)
         GPIO_write(SOLENOID_PIN, 1);
+
+      break;
+
+    case STOP_MOTOR_ID:
+      game_running = false;
+      MOTOR_stop();
+
+      printf("Stopping motor\r\n");
 
       break;
 
