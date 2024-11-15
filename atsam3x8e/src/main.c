@@ -135,8 +135,6 @@ int main()
       game_running = false;
       MOTOR_stop();
 
-      printf("Stopping motor\r\n");
-
       break;
 
     default:
