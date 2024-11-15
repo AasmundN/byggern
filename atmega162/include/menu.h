@@ -1,7 +1,7 @@
 #ifndef __MENU__
 #define __MENU__
 
-#include "adc.h"
+#include "joystick.h"
 
 typedef struct menu menu_t;
 typedef struct menu_page menu_page_t;

@@ -227,11 +227,6 @@ game_state_t GAME_loop(joystick_dir_t dir, int joystick_btn, int slider_btn,
       }
 
       game_menu.state = MENU;
-      for (int i = 0; i < 4; i++)
-      {
-        printf("#%u %s %2u:%2u \r\n", (i + 1), leaderboard[i].name,
-               leaderboard[i].score.minutes, leaderboard[i].score.seconds);
-      }
     }
 
     if (dir != dir_prev)
